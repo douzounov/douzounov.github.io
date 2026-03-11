@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPSC Handgun Competition Rules - Interactive Reference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 25px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px;
+            padding-right: 40px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .search-box .clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #999;
+            padding: 4px;
+            display: none;
+            min-width: auto;
+            padding: 4px 8px;
+        }
+
+        .search-box .clear-btn:hover {
+            color: #333;
+        }
+
+        .search-box input:not(:placeholder-shown) ~ .clear-btn {
+            display: block;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-box input::placeholder {
+            color: #999;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        button {
+            padding: 10px 8px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -webkit-appearance: none;
+            appearance: none;
+            tap-highlight-color: transparent;
+            flex: 1 1 auto;
+            min-width: 55px;
+            max-width: 120px;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+            border-color: #2563eb;
+        }
+
+        button.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .sections {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .section-header {
+            background-color: #f8f9fa;
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            border-left: 4px solid #2563eb;
+            font-weight: 600;
+            font-size: 15px;
+            transition: background-color 0.3s;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .section-header:active {
+            background-color: #dbeafe;
+        }
+
+        .section-header:hover {
+            background-color: #dbeafe;
+        }
+
+        .section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s;
+            color: #2563eb;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .section-content {
+            padding: 12px;
+            max-height: 5000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .section.collapsed .section-content {
+            max-height: 0;
+            padding: 0 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        table th {
+            background-color: #2563eb;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+        }
+
+        table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e0e0e0;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        table tbody tr:active {
+            background-color: #eff6ff;
+        }
+
+        table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        table tbody tr:nth-child(odd) {
+            background-color: #fafbfc;
+        }
+
+        .rule-number {
+            font-weight: 600;
+            color: #2563eb;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            display: inline-block;
+            background: #eff6ff;
+            padding: 4px 6px;
+            border-radius: 3px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .rule-number:hover {
+            background: #2563eb;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .rule-number:active {
+            transform: scale(0.95);
+        }
+
+        .rule-number-inline {
+            font-weight: 600;
+            color: #2563eb;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid #2563eb;
+        }
+
+        .tag-granted {
+            display: inline-block;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 10px;
+            border: 1px solid #c3e6cb;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+
+        .tag-denied {
+            display: inline-block;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 10px;
+            border: 1px solid #f5c6cb;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+
+        .tag-refused {
+            display: inline-block;
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+            font-size: 10px;
+            border: 1px solid #ffeeba;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+
+        .rule-number-inline:hover {
+            background: #eff6ff;
+            transform: scale(1.05);
+        }
+
+        .rule-number-inline:active {
+            transform: scale(0.95);
+        }
+
+        .section-description {
+            color: #555;
+            margin-bottom: 12px;
+            padding: 12px;
+            background-color: #eff6ff;
+            border-left: 3px solid #2563eb;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .stats {
+            display: none;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 11px;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            background: white;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .highlight {
+            background-color: #ffeb3b;
+            padding: 1px 3px;
+            border-radius: 2px;
+            font-weight: 500;
+        }
+
+        footer {
+            margin-top: 30px;
+            padding: 20px 15px;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 11px;
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            animation: fadeIn 0.2s;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 30px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 90%;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 12px 12px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-close:active {
+            transform: scale(0.95);
+        }
+
+        .modal-body {
+            padding: 20px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .modal-body strong {
+            color: #2563eb;
+        }
+
+        /* Mobile-first responsive design */
+        @media (min-width: 480px) {
+            body {
+                font-size: 15px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+
+            .controls {
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            .search-box {
+                flex: 1;
+                min-width: 200px;
+            }
+
+            .filter-buttons {
+                flex-wrap: nowrap;
+                gap: 8px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            table th {
+                font-size: 13px;
+            }
+
+            .modal-content {
+                max-width: 85%;
+            }
+
+            .modal-body {
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            header {
+                padding: 30px 20px;
+                text-align: left;
+            }
+
+            header h1 {
+                font-size: 28px;
+            }
+
+            .controls {
+                gap: 15px;
+            }
+
+            .search-box {
+                flex: 1;
+                min-width: 250px;
+            }
+
+            .filter-buttons {
+                flex-wrap: nowrap;
+                gap: 10px;
+            }
+
+            button {
+                padding: 11px 14px;
+                font-size: 13px;
+                flex: 0 1 auto;
+                min-width: auto;
+                max-width: none;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            button {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            .section-header {
+                font-size: 16px;
+            }
+
+            .modal-content {
+                max-width: 70%;
+            }
+
+            .modal-header {
+                padding: 25px;
+            }
+
+            .modal-body {
+                padding: 25px;
+                font-size: 15px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 25px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .filter-buttons {
+                gap: 12px;
+            }
+
+            button {
+                padding: 11px 18px;
+                font-size: 14px;
+            }
+
+            .modal-content {
+                max-width: 60%;
+            }
+        }
+
+        /* Prevent iOS zoom on input focus */
+        input[type="text"] {
+            font-size: 16px;
+        }
+
+        /* Better touch targets */
+        @media (hover: none) and (pointer: coarse) {
+            button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .section-header {
+                min-height: 50px;
+            }
+
+            .rule-number {
+                min-height: 36px;
+                display: flex;
+                align-items: center;
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 IPSC Handgun Competition Rules</h1>
+        </header>
+
+        <div class="controls">
+             <div class="search-box">
+                 <input type="text" id="searchInput" placeholder="Search rules...">
+                 <button type="button" class="clear-btn" id="clearBtn">✕</button>
+             </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="warnings">⚠️ Warn</button>
+                <button class="filter-btn" data-filter="procedures">📋 Proc</button>
+                <button class="filter-btn" data-filter="disqualifications">⛔ DQ</button>
+                <button class="filter-btn" data-filter="reshoots">🔄 Reshoot</button>
+                <button class="filter-btn" data-filter="scoring">🎯 Scoring</button>
+            </div>
+        </div>
+
+        <div class="stats" id="statsContainer"></div>
+
+        <div class="sections" id="sectionsContainer"></div>
+
+        <footer>
+            <p><strong>Document Source:</strong> IPSC Handgun Competition Rules - January 2026 Edition (Final 29 Dec 2025)</p>
+            <p style="margin-top: 8px;">Last Updated: March 13, 2026</p>
+            <p style="margin-top: 8px; font-size: 10px; color: #999;">💡 Click on any rule number to view the full text from the official rulebook</p>
+        </footer>
+    </div>
+
+    <!-- Modal for displaying full rule text -->
+    <div class="modal" id="ruleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalRuleNumber"></h2>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Full rule text from PDF
+        const fullRuleText = {
+            "2.1.2.1": "2.1.2.1 Subject to the direction and approval of the Regional Director, stage(s) or range specific muzzle angles (reduced or increased) may be permitted. Violations are subject to Rule 10.5.2. Full details of the applicable angles and any conditional factors (e.g. a reduced vertical muzzle angle only applies when a finger is inside the trigger guard), should be published in advance of the match and must be included in the written stage briefings (also see Section 2.3).",
+            "2.1.3": "2.1.3 Minimum Distances – Whenever metal targets or metal hard cover are used in a course of fire, precautions must be taken so that competitors and Match Officials maintain a minimum distance of 7 meters from them while they are being shot. Where possible, this should be done with physical barriers. If Fault Lines are used to limit the approach to metal targets, they must be placed at least 8 meters from the targets so that the competitor may inadvertently fault the line and still be outside the 7 meter minimum distance (see Rule 10.4.7). Care should also be taken in respect of metal props in the line of fire.",
+            "2.2.1.5": "2.2.1.5 If a COF has a passageway visibly delineated by Fault Lines and/or a clearly demarcated shooting area, any competitor who takes a shortcut by stepping on the ground outside the passageway and/or shooting area will incur one procedural penalty for each shot fired after beginning the shortcut.",
+            "2.2.3.1": "2.2.3.1 They must be high enough and strong enough to serve the intended purpose. Unless supplemented by a shooting platform or similar, barriers of at least 1.8 meters high are deemed to extend skywards to infinity (also see Rule 10.2.11).",
+            "2.3.3.3": "2.3.3.3 A competitor who refuses to reshoot a course of fire, under this or any other Section, when so ordered by a Range Officer, will receive a zero score for that stage, irrespective of any previous attempt.",
+            "2.3.4.1": "2.3.4.1 A competitor who incurred a disqualification in a stage which is subsequently deleted, may be entitled to reinstatement, if the highest level of appeal pursued by the competitor (i.e. the Range Master or the Arbitration Committee, as the case may be), deems that the disqualification was directly attributable to the reasons for the stage being deleted.",
+            "2.4.4": "2.4.4 Dummy ammunition and live rounds, whether loose, packaged or contained in magazines or speed loaders, must not be handled in a Safety Area under any circumstances (see Rule 10.5.13).",
+            "4.7.1": "4.7.1 Range equipment must present the challenge fairly and equitably to all competitors. Range equipment failure includes, but is not limited to, the displacement of paper targets, the premature activation of metal or moving targets, the malfunction of mechanically or electrically operated equipment, and the failure of props such as openings, ports, and barriers.",
+            "4.7.2": "4.7.2 A competitor who is unable to complete a course of fire due to range equipment failure, or if a metal or moving target was not reset prior to his attempt at a course of fire, must be required to reshoot the course of fire after corrective actions have been taken.",
+            "4.7.2.1": "4.7.2.1 Unrestored paper targets are not range equipment failure (see Rule 9.1.4).",
+            "4.7.2.2": "4.7.2.2 If a Range Master deems that one or more targets in a course of fire are faulty and/or have been presented in a manner significantly different to earlier presentations, he may offer a reshoot to the affected competitor(s).",
+            "5.1.6": "5.1.6 Firearms must be serviceable and safe. Range Officers may demand examination of a competitor's firearm or allied equipment, at any time, to check they are functioning safely. If any such item is declared unserviceable or unsafe by a Range Officer, it must be withdrawn from the match until the item is repaired to the satisfaction of the Range Master (also see Rule 5.7.5).",
+            "5.1.10": "5.1.10 Handguns with shoulder stocks and/or fore grips of any kind are prohibited (see Rule 10.5.16).",
+            "5.1.11": "5.1.11 Firearms offering \"burst\" and/or fully automatic operation (i.e. whereby more than one round can be discharged on a single pull or activation of the trigger) are prohibited. Firearms fitted with a trigger where one round is discharged upon pulling the trigger and another round discharged upon releasing the trigger are also prohibited (see Rule 10.5.16).",
+            "5.2.1.2": "5.2.1.2 Handguns carried in a holster must have an empty magazine well, and the hammer or striker must be decocked. Violations will incur a warning for the first occurrence, but will be subject to Rule 10.6.1 for subsequent occurrences in the same match.",
+            "5.2.2": "5.2.2 Handling – Except when within the boundaries of a Safety Area, or when under the supervision and direct command of a Range Officer, competitors must not handle their firearms. The word \"handle\" includes holstering or unholstering a firearm, even if it is concealed by a protective cover, and/or adding or removing it to/from the competitor's person while it is wholly or partially holstered. Violations are subject to Rule 10.5.1. Exception: a competitor, who is under the supervision of a Range Officer and mistakenly unholsters his firearm while awaiting the \"Load And Make Ready\" or \"Make Ready\" command will (provided that no other safety infraction or prohibited activity has been committed) incur a warning for the first occurrence, but will be subject to Rule 10.5.1 for subsequent occurrences in the same match.",
+            "5.2.5": "5.2.5 Female competitors in all Divisions are subject to the same conditions as above, except that the belt carrying the holster and all allied equipment may be worn at hip level. If another belt is worn at waist level, the holster and all allied equipment must be placed on the lower belt.",
+            "5.2.7.3": "5.2.7.3 A holster which permits the muzzle of a holstered handgun to point further than 1 meter from the competitor's feet while standing relaxed;",
+            "5.4.3": "5.4.3 If a Range Officer notices that a competitor has lost or displaced their eye or ear protection during a course of fire, or has commenced a course of fire without them, the Range Officer must immediately stop the competitor who will be required to reshoot the course of fire after the protective devices have been restored.",
+            "5.5.4": "5.5.4 Metal piercing, incendiary and/or tracer ammunition is prohibited at IPSC matches (see Rule 10.5.16).",
+            "5.5.5": "5.5.5 Ammunition which discharges more than one bullet or other scoring projectile from a single round is prohibited (see Rule 10.5.16).",
+            "5.5.6": "5.5.6 Ammunition deemed unsafe by a Range Officer must be immediately withdrawn from the match (see Rule 10.5.16).",
+            "5.7.5": "5.7.5 Where the firearm has failed as above, the competitor must not be permitted to reshoot the course of fire. This includes instances where a firearm is declared unserviceable or unsafe during a course of fire (see Rule 5.1.6).",
+            "5.7.6.2": "5.7.6.2 If the Range Officer discovers that the suspected safety problem does not exist, the competitor will be required to reshoot the stage.",
+            "5.7.6.3": "5.7.6.3 A competitor who self-stops due to a suspected or actual squib load is not entitled to a reshoot.",
+            "5.8.1.2": "5.8.1.2 Official match ammunition purchased by competitors is deemed to be competitor equipment (see Section 5.7), therefore malfunctions will not be grounds for a reshoot and/or an appeal to Arbitration.",
+            "6.2.3": "6.2.3 Prior to the commencement of a match, each competitor must declare one Division for score, and Match Officials should check competitor equipment compliance with the declared Division, prior to the competitor making an attempt at any of the courses of fire. This is a service to assist competitors verify that their equipment, in the configuration as presented, is in compliance with their declared Division. However, competitors always remain subject to the provisions of Rule 6.2.5.1.",
+            "6.2.5.1": "6.2.5.1 A competitor who fails to satisfy the maximum distance of handgun and allied equipment from his belt (see Appendices D1-6), or the foremost limit for handgun, holster and allied equipment (see Appendix E2), requirements of a declared Division after the Start Signal will incur a warning for the first offense. Subsequent occurrences in the same match will result in the competitor being placed in Open Division, if available, otherwise the competitor's scores will not be entered into match results. Competitors already registered in Open Division who fail to comply with the above requirements after the Start Signal will incur a warning for the first offense, but will not have their scores entered into match results for subsequent occurrences in the same match. A competitor who fails to satisfy the equipment or other requirements, with the exception of those listed above, of a declared Division after the Start Signal, will be placed in Open Division, if available, otherwise the competitor's scores will not be entered into match results. Competitors already registered in Open Division who fail to comply with the requirements, with the exception of those listed above, of Open Division after the Start Signal will not have their scores entered into match results. This rule does not apply for measurements done under Rule 5.2.5, either before (see Rule 6.2.3) or after the competitor has shot the stage.",
+            "8.1.1.2": "8.1.1.2 Double/Selective Action: hammer fully down and cylinder closed. If self-loading pistols prepare \"magazine well and chamber empty\", revolvers prepare with an empty cylinder, otherwise revolvers prepare with a fully loaded cylinder.",
+            "8.1.2.5": "8.1.2.5 If a handgun has a decocking lever, that alone must be used to decock the handgun, without touching the trigger. If a handgun does not have a decocking lever, the hammer must be safely and manually lowered all the way forward (i.e. not just to a \"half-cock notch\" or to another similar intermediary position).",
+            "8.3.1": "8.3.1 \"Load And Make Ready\" (or \"Make Ready\" for starts with an unloaded firearm) – This command signifies the start of \"the Course of Fire\". Under the direct supervision of the Range Officer the competitor must face downrange, or in a safe direction as specified by the Range Officer, fit eye and ear protection, and prepare the firearm in accordance with the written stage briefing. The competitor must then assume the required start position. At this point, the Range Officer will proceed.",
+            "8.3.1.1": "8.3.1.1 Once the appropriate command has been given, the competitor must not move away from the start location prior to issuance of the Start Signal without the prior approval, and under the direct supervision, of the Range Officer. Violation will result in a warning for the first offense and may result in the application of Rule 10.6.1 for a subsequent offense in the same match.",
+            "8.3.7": "8.3.7 \"If Clear, Hammer Down, Holster\" – After issuance of this command, the competitor must not resume shooting (see Rule 10.6.1). While continuing to point the handgun safely downrange, the competitor must perform a final safety check of the handgun as follows:\n\n8.3.7.1 Self-loaders – Release the slide and pull the trigger (without touching the hammer or decocker, if any). If a handgun has a device which requires a magazine be inserted to enable the trigger to be pulled, the competitor must, on issuance of the above command, inform the Range Officer, who will direct and supervise the use, and subsequent removal, of an empty magazine to facilitate this process.\n\n8.3.7.2 Revolvers – Close the empty cylinder (without touching the hammer, if any).\n\n8.3.7.3 If the gun proves to be clear, the competitor must holster his handgun. Once the competitor's hands are clear of the holstered handgun, the course of fire is deemed to have ended.\n\n8.3.7.4 If the gun does not prove to be clear, the Range Officer will resume the commands from Rule 8.3.6 (also see Rule 10.4.3).",
+            "8.3.7.1": "8.3.7.1 Self-loaders – Release the slide and pull the trigger (without touching the hammer or decocker, if any). If a handgun has a device which requires a magazine be inserted to enable the trigger to be pulled, the competitor must, on issuance of the above command, inform the Range Officer, who will direct and supervise the use, and subsequent removal, of an empty magazine to facilitate this process.",
+            "8.5.1": "8.5.1 Except when the competitor is actually aiming or shooting at targets, all movement must be accomplished with the fingers visibly outside the trigger guard and the external safety should be applied. The firearm must be pointed in a safe direction. \"Movement\" is defined as any of the actions below:\n\n8.5.1.1 Taking more than one step in any direction.\n\n8.5.1.2 Changing shooting position (e.g. from standing to kneeling, from seated to standing etc.).",
+            "8.6.1": "8.6.1 No assistance of any kind can be given to a competitor during a course of fire, except that any Range Officer assigned to a stage may issue safety warnings to a competitor at any time. Such warnings will not be grounds for the competitor to be awarded a reshoot.",
+            "8.6.2": "8.6.2 Any person providing assistance to a competitor during a course of fire without the prior approval of a Range Officer (and the competitor receiving such assistance) may, at the discretion of a Range Officer, incur a procedural penalty for that stage and/or be subject to Section 10.6.",
+            "8.6.3": "8.6.3 Any person verbally or otherwise interfering with a competitor during his attempt at a course of fire may be subject to Section 10.6. If the Range Officer believes that the interference significantly affected the competitor, he must report the incident to the Range Master, who may, at his discretion, offer the affected competitor a reshoot.",
+            "8.6.4": "8.6.4 In the event that inadvertent contact with the Range Officer, or another external influence, has interfered with the competitor during a course of fire, the Range Officer may offer the competitor a reshoot of the course of fire. The competitor must accept or decline the offer prior to seeing either the time or the score from the initial attempt. However, if the competitor commits a safety infraction during any such interference, the provisions of Sections 10.4 and 10.5 may still apply.",
+            "8.6.5": "8.6.5 In the event that any person appears downrange from the competitor during a course of fire, it must immediately be terminated and the competitor required to reshoot the course of fire. If the competitor notices the problem before the Range Officer, he must immediately self-stop, cease firing, point his firearm in a safe direction and wait for further instructions from the Range Officer. However, if the competitor fails to comply with the above procedure, the provisions of Sections 10.4 and 10.5 will apply.",
+            "8.7.1": "8.7.1 Competitors are prohibited from taking a sight picture and/or dry firing prior to the Start Signal. Violation will result in a warning for the first occurrence and one procedural penalty for each subsequent occurrence in the same match. Competitors may, while pointing their firearm directly at the ground in front of them, adjust electronic sights.",
+            "8.7.2": "8.7.2 Competitors are prohibited from using any sighting aid (e.g. the whole or part of an imitation or replica firearm, any part of a real firearm including any accessories thereof etc.), except for their own hands, while conducting their inspection (\"walkthrough\") of a course of fire. Violations will incur one procedural penalty per occurrence (also see Rule 10.5.1).",
+            "8.7.3": "8.7.3 No person is permitted to enter or move through a course of fire without the prior approval of a Range Officer assigned to that course of fire, or the Range Master. Violations will incur a warning for the first offense but may be subject to the provisions of Section 10.6 for subsequent offenses.",
+            "9.1.1": "9.1.1 Approaching Targets – While scoring is in progress, competitors or their delegate must not approach any target closer than 1 meter without the authorization of the Range Officer. Violation will result in a warning for the first offense, but the competitor or his delegate may, at the discretion of the Range Officer, incur a procedural penalty for subsequent occurrences in the same match.",
+            "9.1.2": "9.1.2 Touching Targets – While scoring is in progress competitors or their delegate must not touch, gauge or otherwise interfere with any target without the authorization of the Range Officer. Should a Range Officer deem that a competitor or their delegate has influenced or affected the scoring process due to such interference, the Range Officer may:\n\n9.1.2.1 Score the affected target as a missed target; or\n\n9.1.2.2 Impose penalties for any affected no-shoots.",
+            "9.1.2.1": "9.1.2.1 Score the affected target as a missed target; or",
+            "9.1.2.2": "9.1.2.2 Impose penalties for any affected no-shoots.",
+            "9.1.3": "9.1.3 Prematurely Patched Targets – If a target is prematurely patched or taped, preventing the determination of the actual score, the Range Officer must order the competitor to reshoot the course of fire.",
+            "9.1.4": "9.1.4 Unrestored Targets – If, following completion of a course of fire by a previous competitor, one or more targets have not been properly patched or taped for the competitor being scored, the Range Officer must judge whether or not an accurate score can be determined. If there are extra scoring hits or questionable penalty hits thereon, and it is not obvious which hits were made by the competitor being scored, the affected competitor must be ordered to reshoot the course of fire.",
+            "9.1.4.1": "9.1.4.1 In the event that patches or tape applied to a restored paper target are accidentally blown off by wind, muzzle blast or another reason, and it is not obvious to the Range Officer which hits were made by the competitor being scored, the competitor will be required to reshoot the course of fire.",
+            "9.1.4.2": "9.1.4.2 A competitor who hesitates or self-stops during his attempt at a course of fire, due to a belief that one or more targets have not been restored or reset, is not entitled to a reshoot.",
+            "9.1.5.1": "9.1.5.1 Bullet strikes wholly within the scoring area of a paper target, and continues on to strike the scoring area of another paper target, the hit on the subsequent paper target will not count for score or penalty, as the case may be.",
+            "9.1.5.2": "9.1.5.2 Bullet strikes wholly within the scoring area of a paper target, and continues on to hit or strike down a metal target, this will be treated as range equipment failure. The competitor will be required to reshoot the course of fire, after it has been restored.",
+            "9.1.5.3": "9.1.5.3 Bullet strikes partially within the scoring area of a paper or metal target, and continues on to strike the scoring area of another paper target, the hit on the subsequent paper target will also count for score or penalty, as the case may be.",
+            "9.1.5.4": "9.1.5.4 Bullet strikes partially within the scoring area of a paper or metal target, and continues on to strike down (or hit the scoring area of) another metal target, the fallen (or hit on the) subsequent metal target will also count for score or penalty, as the case may be.",
+            "9.1.6.1": "9.1.6.1 Bullet strikes wholly within hard cover, and continues on to strike the scoring area of a scoring paper target or no-shoot, the hit on the paper target or no-shoot will not count for score or penalty, as the case may be. If it cannot be determined which hit(s) on the scoring area of a scoring paper target or no-shoot are the result of shots fired through hard cover, the scoring paper target or noshoot will be scored by ignoring the applicable number of highest scoring hit(s).",
+            "9.1.6.2": "9.1.6.2 Bullet strikes wholly within hard cover, and continues on to hit or strike down a metal target, this will be treated as range equipment failure (see Rule 4.7.1). The competitor will be required to reshoot the course of fire, after it has been restored.",
+            "9.1.6.3": "9.1.6.3 Bullet strikes partially within hard cover, and continues on to strike the scoring area of a paper target, the hit on that paper target will count for score or penalty, as the case may be.",
+            "9.1.6.4": "9.1.6.4 Bullet strikes partially within hard cover, and continues on to strike down a scoring metal target, the fallen target will count for score. If a bullet strikes partially within hard cover, and continues on to strike down or hit a metal no-shoot, the fallen no-shoot or hit thereon will count for penalty.",
+            "9.1.7": "9.1.7 Target Sticks – Are neither Hard Cover nor Soft Cover. Shots which have passed wholly or partially through target sticks and which hit a paper or metal target will count for score or penalty, as the case may be.",
+            "9.4.2": "9.4.2 Each hit visible on the scoring area of a paper no-shoot will be penalized minus 10 points, up to a maximum of 2 hits per no-shoot.",
+            "9.7.4": "9.7.4 A score sheet signed by both a competitor and a Range Officer is conclusive evidence that the course of fire has been completed, and that the time, scores and penalties recorded on the score sheet, are accurate and uncontested. The signed score sheet is deemed to be a definitive document and, with the exception of the mutual consent of the competitor and the signatory Range Officer, or due to an arbitration decision, the score sheet will only be changed to correct arithmetical errors or to add procedural penalties under Rule 8.6.2.",
+            "9.7.6": "9.7.6 In the event that a reshoot is not possible for any reason, the following actions will prevail:\n\n9.7.6.1 If the time is missing, the competitor will receive a zero score for the stage.\n\n9.7.6.2 If insufficient hits or misses have been recorded on the score sheet, those which have been recorded will be deemed complete and conclusive.\n\n9.7.6.3 If excessive hits or misses have been recorded on the score sheet, the highest value scoring hits recorded will be used.\n\n9.7.6.4 Procedural penalties recorded on the score sheet will be deemed complete and conclusive, except where Rule 8.6.2 applies.\n\n9.7.6.5 If the identity of the competitor is missing from a score sheet, it must be referred to the Range Master, who must take whatever action he deems necessary to rectify the situation.",
+            "9.7.6.1": "9.7.6.1 If the time is missing, the competitor will receive a zero score for the stage.",
+            "9.7.6.2": "9.7.6.2 If insufficient hits or misses have been recorded on the score sheet, those which have been recorded will be deemed complete and conclusive.",
+            "9.7.6.3": "9.7.6.3 If excessive hits or misses have been recorded on the score sheet, the highest value scoring hits recorded will be used.",
+            "9.7.6.4": "9.7.6.4 Procedural penalties recorded on the score sheet will be deemed complete and conclusive, except where Rule 8.6.2 applies.",
+            "9.7.6.5": "9.7.6.5 If the identity of the competitor is missing from a score sheet, it must be referred to the Range Master, who must take whatever action he deems necessary to rectify the situation. In the event that an original score sheet is lost or otherwise unavailable, the competitor's duplicate copy, or any other written or electronic record acceptable to the Range Master, will be used. If the competitor's copy, or any other written or electronic record, is unavailable, or is deemed by the Range Master to be insufficiently legible the competitor will be required to reshoot the course of fire. If the Range Master deems that a reshoot is not possible for any reason, the competitor will incur a zero time and score for the affected stage.",
+            "9.7.8": "9.7.8 No person, other than an authorized Match Official, is permitted to handle an original score sheet retained on a stage, or at any other place, after it has been signed by a competitor and a Range Officer, without the prior approval of the Range Officer or personnel directly involved with Stats. Violations will incur a warning for the first offense, but may be subject to Section 10.6 for subsequent occurrences in the same match.",
+            "9.9.2": "9.9.2 Moving targets which do not comply with the above criteria are disappearing and will not incur failure to engage or miss penalties unless a competitor fails to activate the mechanism which initiates the target movement before or when firing his last shot for that course of fire.",
+            "9.10.2": "9.10.2 If, in the opinion of an Arbitration Committee, the time credited to a competitor for a course of fire is deemed to be unrealistic, the competitor will be required to reshoot the course of fire (see Rule 9.7.4).",
+            "10.1.1": "10.1.1 Procedural penalties are imposed when a competitor fails to comply with procedures specified in a written stage briefing and/or is found to be in violation of other general rules. The Range Officer imposing the procedural penalties must clearly record the number of penalties, and the reason why they were imposed, on the competitor's score sheet.",
+            "10.1.2": "10.1.2 Procedural penalties are assessed at minus 10 points each.",
+            "10.1.3": "10.1.3 A competitor disputing the application or number of procedural penalties may appeal to the Chief Range Officer and/or Range Master. A competitor who continues to be aggrieved may then lodge an appeal for arbitration.",
+            "10.1.4": "10.1.4 Procedural penalties cannot be nullified by further competitor action. For example, a competitor who fires a shot at a target while faulting a line will still incur the applicable penalties even though he subsequently shoots at the same target while not faulting the line.",
+            "10.2.1": "10.2.1 A competitor who fires shots while any part of their body is touching the ground or any object beyond a Fault Line will receive 1 procedural penalty for each occurrence. No penalty is assessed if a competitor does not fire any shots while faulting except when Rule 2.2.1.5 applies.\n\n10.2.1.1 However, if the competitor has gained a significant advantage on any target(s) while faulting, he may instead be assessed 1 procedural penalty for each shot fired at the subject target(s) while faulting.",
+            "10.2.2": "10.2.2 A competitor who fails to comply with a procedure specified in the written stage briefing will incur 1 procedural penalty for each occurrence. However, if a competitor has gained a significant advantage during non-compliance, the competitor may be assessed 1 procedural penalty for each shot fired, instead of a single penalty (e.g. firing one or more shots contrary to the required location, shooting position or stance).",
+            "10.2.3": "10.2.3 Where multiple penalties are assessed in the above cases, they must not exceed the maximum number of scoring hits that can be attained by the competitor. For example, a competitor who gains an advantage while faulting a Fault Line where only 4 metal targets are visible will receive 1 procedural penalty for each shot fired while faulting, up to a maximum of 4 procedural penalties, regardless of the number of shots actually fired.",
+            "10.2.4": "10.2.4 A competitor who fails to comply with a mandatory reload will incur 1 procedural penalty for each shot fired after the point where the reload was required until a reload is performed.",
+            "10.2.5": "10.2.5 In a Cooper Tunnel, a competitor who disturbs one or more pieces of the overhead material will receive 1 procedural penalty for each piece of overhead material which falls. Overhead material which falls as a result of the competitor bumping or striking the uprights, or as a result of muzzle gases or recoil, will not be penalized.",
+            "10.2.6": "10.2.6 A competitor who is creeping (e.g. moving hands towards the firearm, a reloading device or ammunition) or physically moving to a more advantageous shooting position or stance after the \"Standby\" command and prior to issuance of the Start Signal, will incur 1 procedural penalty. If the Range Officer can stop the competitor in time, a warning will be issued for the first offense and the competitor will be restarted.",
+            "10.2.7": "10.2.7 A competitor who fails to engage any scoring target with at least one round will incur 1 procedural penalty per target, plus the applicable number of misses, except where the provisions of Rule 9.9.2 apply.",
+            "10.2.8": "10.2.8 If a course of fire (or part thereof) stipulates shooting strong or weak hand only, a competitor will incur one procedural penalty for each occurrence of touching the handgun (or scooping it from a table etc.) with the other hand after the Start Signal (or from the point where single hand shooting has been stipulated). Exceptions are releasing an external safety (without scooping), reloading or correcting a malfunction. However, the procedural penalty will be applied on a \"per shot fired\" basis when a competitor uses the other hand or arm to:\n\n10.2.8.1 support the handgun or the stipulated wrist, hand or arm while firing shots;\n\n10.2.8.2 increase stability on the ground, a barricade or another prop while firing shots.",
+            "10.2.8.1": "10.2.8.1 support the handgun or the stipulated wrist, hand or arm while firing shots;",
+            "10.2.8.2": "10.2.8.2 increase stability on the ground, a barricade or another prop while firing shots.",
+            "10.2.9": "10.2.9 A competitor who leaves a shooting location may return and shoot again from the same location provided they do so safely. However, written stage briefings for Classifiers and Level I & II matches may prohibit such actions, in which case 1 procedural penalty per shot fired will apply.",
+            "10.2.10": "10.2.10 Special penalty: A competitor unable to fully execute any part of a course of fire due to incapacity or injury may, prior to making his attempt at the course of fire, request that the Range Master apply a penalty in lieu of the stated course requirement.\n\n10.2.10.1 If the request is approved by the Range Master, he must state, in advance of the competitor attempting the course of fire, the extent of the special penalty, ranging from 1% to 20% of the competitor's points \"as shot\", to be deducted.\n\n10.2.10.2 Alternatively, the Range Master may waive application of any penalties in respect of a competitor who, due to having a significant physical disability, is unable to comply with the stated course requirement.\n\n10.2.10.3 If the request is denied by the Range Master, normal procedural penalties will apply.",
+            "10.2.11": "10.2.11 A competitor who fires shots over a barrier constructed to a height of at least 1.8 meters will incur 1 procedural penalty for each shot fired (also see Rule 2.2.3.1).",
+            "10.3.1": "10.3.1 A competitor who commits a safety infraction or any other prohibited activity during an IPSC match will be disqualified, and will be prohibited from attempting any remaining courses of fire regardless of the schedule or physical layout of the match, pending the verdict of any appeal submitted in accordance with Chapter 11 of these rules.",
+            "10.4.1": "10.4.1 A shot, which travels over a backstop, a berm or in any other direction, specified in the written stage briefing by the match organizers as being unsafe. Note that a competitor who legitimately fires a shot at a target, which then travels in an unsafe direction, will not be disqualified, but the provisions of Section 2.3 may apply.",
+            "10.4.2": "10.4.2 A shot which strikes the ground within 3 meters of the competitor, except when shooting at a paper target closer than 3 meters to the competitor. A shot which strikes the ground within 3 meters of the competitor due to a \"squib\" load is exempt from this rule.",
+            "10.4.3": "10.4.3 A shot which occurs while actually loading, reloading or unloading a firearm. This includes any shot fired during the procedures outlined in Rules 8.3.1 and 8.3.7 (also see Rule 10.5.10).\n\n10.4.3.1 Exception – a detonation, which occurs while unloading a firearm, is not considered a shot or discharge subject to a disqualification. However, Rule 5.1.6 may apply.",
+            "10.4.3.1": "10.4.3.1 Exception – a detonation, which occurs while unloading a firearm, is not considered a shot or discharge subject to a disqualification. However, Rule 5.1.6 may apply.",
+            "10.4.4": "10.4.4 A shot which occurs during remedial action in the case of a malfunction.",
+            "10.4.5": "10.4.5 A shot which occurs while transferring a handgun between hands.",
+            "10.4.6": "10.4.6 A shot which occurs during movement, except while actually shooting at targets.",
+            "10.4.7": "10.4.7 A shot fired at a metal target from a distance of less than 7 meters, measured from the front of the target to the nearest part of the competitor's body in contact with the ground (see Rule 2.1.3).",
+            "10.4.8": "10.4.8 In this Section, if it can be established that the cause of the discharge is due to a broken or defective part of the firearm, the competitor has not committed any safety infraction in this Section, and a disqualification will not be invoked, but the competitor's scores for that stage will be zero.\n\n10.4.8.1 The firearm must be immediately presented for inspection to the Range Master or his delegate, who will inspect the firearm and carry out any tests necessary to establish that a broken or defective part caused the discharge. A competitor may not later appeal a disqualification for an accidental discharge due to a broken or defective part if they fail to present the firearm for inspection prior to leaving the course of fire.",
+            "10.5.1": "10.5.1 Handling a firearm at any time except when in a designated Safety Area or when under the supervision of, and in response to a direct command issued by, a Range Officer (limited exception: see Rule 5.2.2).",
+            "10.5.2": "10.5.2 Allowing the muzzle of a firearm to point uprange, or past the default, or specific safe angles of fire during a course of fire, (limited exceptions: see Rules 2.1.2.1, 5.2.7.3 and 10.5.7).",
+            "10.5.3": "10.5.3 If at any time during the course of fire, a competitor drops his firearm or causes it to fall, loaded or not. Note that a competitor who, for any reason during a course of fire, safely and intentionally places the firearm on the ground or other stable object will not be disqualified provided:\n\n10.5.3.1 The competitor maintains constant physical contact with the firearm, until it is placed firmly and securely on the ground or another stable object; and\n\n10.5.3.2 The competitor remains within 1 meter of the firearm at all times (except where the firearm is placed at a greater distance, under the supervision of a Range Officer, in order to comply with a start position); and\n\n10.5.3.3 The provisions of Rule 10.5.2 do not occur; and\n\n10.5.3.4 The firearm is in the ready condition as specified in Section 8.1; or\n\n10.5.3.5 The firearm is unloaded and the action is open.",
+            "10.5.3.1": "10.5.3.1 The competitor maintains constant physical contact with the firearm, until it is placed firmly and securely on the ground or another stable object; and",
+            "10.5.3.2": "10.5.3.2 The competitor remains within 1 meter of the firearm at all times (except where the firearm is placed at a greater distance, under the supervision of a Range Officer, in order to comply with a start position); and",
+            "10.5.3.3": "10.5.3.3 The provisions of Rule 10.5.2 do not occur; and",
+            "10.5.3.4": "10.5.3.4 The firearm is in the ready condition as specified in Section 8.1; or",
+            "10.5.3.5": "10.5.3.5 The firearm is unloaded and the action is open.",
+            "10.5.4": "10.5.4 Drawing or holstering a handgun within the confines of a tunnel.",
+            "10.5.5": "10.5.5 Allowing the muzzle of a handgun to point at any part of the competitor's body during a course of fire (i.e. sweeping). A disqualification is not applicable if sweeping occurs while drawing or re-holstering a gun, provided the competitor's fingers are clearly outside the trigger guard.",
+            "10.5.6": "10.5.6 Allowing the muzzle of a firearm to point at any part of another person's body (e.g. Match Official or spectator) during a course of fire. A disqualification is not applicable if the problem is due to another person appearing downrange from the competitor during a course of fire, provided that the competitor complies with the provisions of Rule 8.6.5.",
+            "10.5.7": "10.5.7 Allowing the muzzle of a loaded handgun to point rearwards uprange beyond a radius of 1 meter from a competitor's feet during drawing or re-holstering. The 1 meter concession only applies when a competitor is facing directly downrange.",
+            "10.5.8": "10.5.8 Wearing or using more than one firearm during a course of fire.",
+            "10.5.9": "10.5.9 Failure to keep the finger outside the trigger guard while clearing a malfunction where the competitor clearly moves the firearm away from aiming at targets.",
+            "10.5.10": "10.5.10 Failure to keep the finger outside the trigger guard during loading, reloading, or unloading except where specifically permitted (see Rules 8.1.2.5, 8.3.7.1 and 8.7.1).",
+            "10.5.11": "10.5.11 Failure to keep the finger outside the trigger guard during movement in accordance with Rule 8.5.1.",
+            "10.5.12": "10.5.12 Having a loaded and holstered handgun, in any of the following conditions:\n\n10.5.12.1 A single action self-loading pistol with the chamber loaded and the safety not applied.\n\n10.5.12.2 A double action or selective action pistol with the hammer cocked and the safety not applied.\n\n10.5.12.3 A revolver with the hammer cocked.",
+            "10.5.12.1": "10.5.12.1 A single action self-loading pistol with the chamber loaded and the safety not applied.",
+            "10.5.12.2": "10.5.12.2 A double action or selective action pistol with the hammer cocked and the safety not applied.",
+            "10.5.12.3": "10.5.12.3 A revolver with the hammer cocked.",
+            "10.5.13": "10.5.13 Handling live or dummy ammunition in a Safety Area, contrary to Rule 2.4.4.\n\n10.5.13.1 The word \"handling\" does not preclude competitors from entering a Safety Area with ammunition in magazines or speed loaders on their belt, in their pockets or in their range bag, provided the competitor does not physically remove the loaded magazines or loaded speed loaders from their retaining or storage device while within the Safety Area.",
+            "10.5.14": "10.5.14 Having a loaded firearm other than when specifically authorized by a Range Officer.",
+            "10.5.15": "10.5.15 Retrieving a dropped firearm. Dropped firearms must always be retrieved by a Range Officer who will, after checking and/or clearing the firearm, place it directly into the competitor's gun case, gun bag or holster. Dropping an unloaded firearm or causing it to fall outside of a course of fire is not an infraction. However, a competitor who retrieves a dropped firearm will receive a disqualification.",
+            "10.5.16": "10.5.16 Using prohibited and/or unsafe ammunition (see Rules 5.5.4, 5.5.5 and 5.5.6), and/or using a prohibited firearm (see Rules 5.1.10 and 5.1.11).",
+            "10.6.1": "10.6.1 Competitors will be disqualified for conduct which a Range Officer deems to be unsportsmanlike. Examples include, but are not limited to, cheating, dishonesty, failing to comply with the reasonable directions of a Match Official, or any behavior likely to bring the sport into disrepute. The Range Master must be notified as soon as possible.",
+            "10.6.2": "10.6.2 A competitor who is deemed by a Range Officer to have intentionally removed or caused the loss of eye or ear protection in order to gain a reshoot or advantage will be disqualified.",
+            "10.7.3": "10.7.3 Except when used for medicinal purposes, competitors and officials at matches must not be affected by drugs (including alcohol) of any sort during matches. Any person, who in the opinion of the Range Master is visibly under the influence of any of the items described herein, will be disqualified from the match and may be required to leave the range."
+        };
+
+        // Data structure
+        const rulesData = {
+            warnings: {
+                title: "Warnings",
+                description: "Violations that result in warnings, with escalating penalties for repeat offenses.",
+                type: "warnings",
+                rows: [
+                    { rule: "5.2.1.2", condition: "Handgun carried in holster with loaded magazine well or cocked hammer/striker", action: "Warning for first offense; subsequent violations subject to Rule 10.6.1" },
+                    { rule: "5.2.2", condition: "Unholstering firearm while awaiting \"Load And Make Ready\" or \"Make Ready\" command (first occurrence only, no other safety infraction)", action: "Warning for first offense; subsequent violations subject to Rule 10.5.1" },
+                    { rule: "6.2.5.1", condition: "Failure to comply with Division equipment requirements after Start Signal", action: "Warning for first offense; subsequent: placed in Open (if available) or scores not entered. Open Division competitors: warning then scores not entered. See also Rules 5.2.5, 6.2.3." },
+                    { rule: "8.3.1.1", condition: "Moving away from start location prior to Start Signal without Range Officer approval/supervision", action: "Warning for first offense; subsequent offense in same match may invoke Rule 10.6.1" },
+                    { rule: "8.7.1", condition: "Taking a sight picture and/or dry firing prior to Start Signal", action: "Warning for first occurrence; subsequent violations in same match incur 1 procedural penalty each" },
+                    { rule: "8.7.3", condition: "Entering or moving through course of fire without Range Officer approval", action: "Warning for first offense; subsequent offenses subject to Rule 10.6.1" },
+                    { rule: "9.1.1", condition: "Approaching target closer than 1 meter during scoring without Range Officer authorization", action: "Warning for first offense; subsequent occurrences may incur procedural penalty at Range Officer discretion" },
+                    { rule: "9.7.8", condition: "Handling original signed score sheet without Range Officer/Stats personnel approval", action: "Warning for first offense; subsequent occurrences subject to Rule 10.6.1" },
+                    { rule: "10.2.6", condition: "Creeping or physically moving to advantageous position after \"Standby\" command and before Start Signal (if Range Officer can stop in time)", action: "Warning for first offense; competitor restarted (vs. procedural penalty if not stopped in time)" }
+                ]
+            },
+            procedures: {
+                title: "Procedures",
+                description: "Procedural requirements with specific point deductions (-10 points per procedural penalty).",
+                type: "procedures",
+                rows: [
+                    { rule: "8.7.2", condition: "Using sighting aids during course walkthrough (except hands)", action: "1 procedural penalty per occurrence. See also Rule 10.5.1." },
+                    { rule: "10.1.1-10.1.4", condition: "GENERAL: Competitor must comply with procedures in written stage briefing and general rules", action: "Procedural penalties (-10 points each) assessed at Range Officer discretion; penalties cannot be nullified by further competitor action" },
+                    { rule: "10.2.1", condition: "Firing shots while body touching ground/object beyond Fault Line", action: "1 procedural penalty per occurrence (or per shot if significant advantage; no penalty if no shots fired unless Rule 2.2.1.5 applies)" },
+                    { rule: "10.2.2", condition: "Failing to comply with procedure in written stage briefing", action: "1 procedural penalty per occurrence (or per shot fired if gained significant advantage)" },
+                    { rule: "10.2.3", condition: "Multiple penalties assessed while faulting or non-complying", action: "Penalties capped at maximum scoring hits available on affected targets" },
+                    { rule: "10.2.4", condition: "Failing to comply with mandatory reload", action: "1 procedural penalty per shot fired after required reload point until reload performed" },
+                    { rule: "10.2.5", condition: "Disturbing overhead material in Cooper Tunnel", action: "1 procedural penalty per piece of material that falls (excludes falls from uprights/muzzle gases/recoil)" },
+                    { rule: "10.2.6", condition: "Creeping or physically moving to advantageous position after \"Standby\" command and before Start Signal", action: "1 procedural penalty (or warning + restart if Range Officer stops in time for first offense)" },
+                    { rule: "10.2.7", condition: "Failing to engage any scoring target with at least one round", action: "1 procedural penalty per target + applicable misses (except disappearing targets per Rule 9.9.2)" },
+                    { rule: "10.2.8", condition: "Touching handgun with wrong hand during strong/weak hand only shooting (after Start Signal)", action: "1 procedural penalty per occurrence (or per shot if using wrong hand/arm for support/stability); exceptions: releasing safety, reloading, malfunction" },
+                    { rule: "10.2.9", condition: "Leaving shooting location and returning to shoot again", action: "Allowed if done safely (unless prohibited in stage briefing: 1 procedural per shot)" },
+                    { rule: "10.2.10", condition: "Unable to execute course of fire due to incapacity/injury", action: "Range Master may apply special penalty (1-20% of points) or waive for significant disability" },
+                    { rule: "10.2.11", condition: "Firing shots over barrier 1.8 meters or higher", action: "1 procedural penalty per shot fired. See also Rule 2.2.3.1." }
+                ]
+            },
+            disqualifications: {
+                title: "Disqualifications",
+                description: "Violations that result in immediate disqualification from the match.",
+                type: "disqualifications",
+                rows: [
+                    { rule: "10.3.1", condition: "Any safety infraction or prohibited activity during match", action: "Disqualification; prohibited from attempting remaining courses of fire pending appeal verdict" },
+                    { rule: "10.4.1", condition: "Shot traveling over backstop, berm, or other unsafe direction specified in briefing", action: "Disqualification (Note: legitimate shot hitting target then traveling unsafely = NOT disqualified)" },
+                    { rule: "10.4.2", condition: "Shot striking ground within 3 meters of competitor (except shooting paper target closer than 3 meters)", action: "Disqualification" },
+                    { rule: "10.4.3", condition: "Shot occurring while loading, reloading, or unloading firearm", action: "Disqualification (Exception: detonation while unloading NOT considered shot subject to disqualification). See also Rules 8.3.1, 8.3.7, 10.5.10, 5.1.6." },
+                    { rule: "10.4.4", condition: "Shot occurring during remedial action for malfunction", action: "Disqualification" },
+                    { rule: "10.4.5", condition: "Shot occurring while transferring handgun between hands", action: "Disqualification" },
+                    { rule: "10.4.6", condition: "Shot occurring during movement (except while actually shooting at targets)", action: "Disqualification" },
+                    { rule: "10.4.7", condition: "Shot fired at metal target from less than 7 meters", action: "Disqualification. See also Rule 2.1.3." },
+                    { rule: "10.4.8", condition: "Accidental discharge caused by broken/defective firearm part", action: "No DQ if proven, but stage scores = zero (must present firearm for inspection)" },
+                    { rule: "10.5.1", condition: "Handling firearm except in Safety Area or under Range Officer supervision/command", action: "Disqualification (limited exception: see Rule 5.2.2)" },
+                    { rule: "10.5.2", condition: "Allowing muzzle to point uprange or past safe angles during course of fire", action: "Disqualification (limited exceptions: Rules 2.1.2.1, 5.2.7.3, 10.5.7)" },
+                    { rule: "10.5.3", condition: "Dropping or causing firearm to fall (loaded or not)", action: "Disqualification (exception: safely placing with constant contact, within 1m, not violating 10.5.2, and ready condition or unloaded/open)" },
+                    { rule: "10.5.4", condition: "Drawing or holstering handgun within confines of tunnel", action: "Disqualification" },
+                    { rule: "10.5.5", condition: "Muzzle pointing at own body during course (sweeping)", action: "Disqualification (exception: drawing/re-holstering with finger clearly outside trigger guard)" },
+                    { rule: "10.5.6", condition: "Muzzle pointing at another person body during course", action: "Disqualification (exception: person appears downrange and competitor complies with Rule 8.6.5)" },
+                    { rule: "10.5.7", condition: "Loaded handgun muzzle pointing rearwards uprange beyond 1m during draw/reholster", action: "Disqualification (1m concession only when facing directly downrange)" },
+                    { rule: "10.5.8", condition: "Wearing or using more than one firearm during course of fire", action: "Disqualification" },
+                    { rule: "10.5.9", condition: "Finger inside trigger guard while clearing malfunction away from targets", action: "Disqualification" },
+                    { rule: "10.5.10", condition: "Finger inside trigger guard during loading, reloading, unloading", action: "Disqualification (exceptions: specifically permitted per Rules 8.1.2.5, 8.3.7.1, 8.7.1)" },
+                    { rule: "10.5.11", condition: "Finger inside trigger guard during movement", action: "Disqualification (per Rule 8.5.1)" },
+                    { rule: "10.5.12", condition: "Loaded and holstered handgun in unsafe condition", action: "Disqualification" },
+                    { rule: "10.5.13", condition: "Handling live or dummy ammunition in Safety Area", action: "Disqualification (exception: ammunition in magazines/speed loaders on belt/pockets/bag may be carried but not removed from storage). See also Rule 2.4.4." },
+                    { rule: "10.5.14", condition: "Having loaded firearm when not authorized by Range Officer", action: "Disqualification" },
+                    { rule: "10.5.15", condition: "Retrieving dropped firearm", action: "Disqualification (RO must retrieve and place in gun case/bag/holster)" },
+                    { rule: "10.5.16", condition: "Using prohibited/unsafe ammunition or prohibited firearm", action: "Disqualification (see Rules 5.5.4, 5.5.5, 5.5.6, 5.1.10, 5.1.11)" },
+                    { rule: "10.6.1", condition: "Unsportsmanlike conduct including cheating, dishonesty, failing to comply with Match Official directions", action: "Disqualification; Range Master notified immediately" },
+                    { rule: "10.6.2", condition: "Intentionally removing/causing loss of eye or ear protection for reshoot/advantage", action: "Disqualification" },
+                    { rule: "10.7.3", condition: "Visibly under influence of drugs (including alcohol) except for medicinal purposes", action: "Disqualification from match; may be required to leave range" }
+                ]
+            },
+            reshoots: {
+                title: "Reshoots",
+                description: "Rules for when reshoots are granted or denied.",
+                type: "reshoots",
+                rows: [
+                    { rule: "2.3.3.3", condition: "[REFUSED] Competitor refuses ordered reshoot", action: "Zero score for that stage, regardless of previous attempt score" },
+                    { rule: "4.7.2", condition: "[GRANTED] Range equipment failure OR metal/moving target not reset before attempt", action: "Competitor must be required to reshoot after corrective actions" },
+                    { rule: "4.7.2.1", condition: "[DENIED] Unrestored paper targets", action: "NOT considered range equipment failure (no reshoot). See also Rule 9.1.4." },
+                    { rule: "4.7.2.2", condition: "[GRANTED] Target(s) faulty or presented significantly differently than earlier presentations", action: "Range Master may offer reshoot to affected competitor(s)" },
+                    { rule: "5.4.3", condition: "[GRANTED] Eye or ear protection lost/displaced OR course started without them", action: "Competitor must be required to reshoot after protective devices restored" },
+                    { rule: "5.7.5", condition: "[DENIED] Firearm has failed (unserviceable or unsafe declared during course)", action: "Competitor must NOT be permitted to reshoot the course. See also Rule 5.1.6." },
+                    { rule: "5.7.6.2", condition: "[GRANTED] Range Officer discovers suspected safety problem does not exist", action: "Competitor will be required to reshoot the stage" },
+                    { rule: "5.7.6.3", condition: "[DENIED] Competitor self-stops due to suspected or actual squib load", action: "Competitor is NOT entitled to a reshoot" },
+                    { rule: "5.8.1.2", condition: "[DENIED] Ammunition malfunction (official match ammunition)", action: "Malfunctions will NOT be grounds for reshoot and/or appeal to Arbitration" },
+                    { rule: "8.6.1", condition: "[DENIED] Range Officer issues safety warnings to competitor during course", action: "Safety warnings will NOT be grounds for reshoot (warnings are permitted assistance)" },
+                    { rule: "8.6.3", condition: "[GRANTED] Person verbally or otherwise interfering significantly affects competitor", action: "Range Master may offer reshoot at their discretion" },
+                    { rule: "8.6.4", condition: "[GRANTED] Range Officer or other external influence inadvertently interferes with competitor", action: "Range Officer may offer competitor a reshoot" },
+                    { rule: "8.6.5", condition: "[GRANTED] Person appears downrange during course of fire", action: "Competitor must immediately cease firing and be required to reshoot" },
+                    { rule: "9.1.3", condition: "[GRANTED] Target prematurely patched/taped, preventing accurate score determination", action: "Range Officer must order competitor to reshoot" },
+                    { rule: "9.1.4.2", condition: "[DENIED] Competitor hesitates/self-stops believing targets not restored/reset", action: "Competitor is NOT entitled to a reshoot" },
+                    { rule: "9.7.6", condition: "[DENIED] Reshoot not possible for any reason", action: "Apply specific remedies: missing time = zero score; recorded hits/misses/penalties = deemed conclusive; missing competitor ID = Range Master determines action. See also Rule 8.6.2." },
+                    { rule: "9.10.2", condition: "[GRANTED] Arbitration Committee deems time credited to competitor unrealistic", action: "Competitor will be required to reshoot. See also Rule 9.7.4." }
+                ]
+            },
+            scoring: {
+                title: "Scoring",
+                description: "Rules for target scoring, hit evaluation, and handling of damaged or impenetrable targets.",
+                type: "scoring",
+                rows: [
+                    { rule: "9.1.1", condition: "Approaching targets closer than 1 meter during scoring without Range Officer authorization", action: "Warning for first offense; subsequent violations may incur procedural penalty at Range Officer discretion" },
+                    { rule: "9.1.2", condition: "Touching, gauging, or interfering with target during scoring without Range Officer authorization", action: "Range Officer may score affected target as missed OR impose penalties for affected no-shoots" },
+                    { rule: "9.1.3", condition: "Target prematurely patched/taped, preventing score determination", action: "Competitor must be required to reshoot the course of fire" },
+                    { rule: "9.1.4", condition: "Targets not properly patched/taped for scoring, with extra scoring or questionable penalty hits", action: "Range Officer must judge if accurate score possible; if not, competitor must reshoot" },
+                    { rule: "9.1.4.1", condition: "Patches/tape on restored target blown off by wind or muzzle blast with ambiguous hits", action: "Competitor will be required to reshoot the course of fire" },
+                    { rule: "9.1.5.1", condition: "Bullet strikes wholly through scoring area of one paper target and into another paper target", action: "Hit on subsequent paper target will NOT count for score or penalty" },
+                    { rule: "9.1.5.2", condition: "Bullet strikes wholly through scoring area of paper target and strikes down a metal target", action: "Treated as range equipment failure; competitor will be required to reshoot" },
+                    { rule: "9.1.5.3", condition: "Bullet strikes partially within scoring area of one target and continues to another paper target", action: "Hit on subsequent paper target WILL count for score or penalty" },
+                    { rule: "9.1.5.4", condition: "Bullet strikes partially within scoring area and strikes down another metal target", action: "Fallen metal target WILL count for score or penalty" },
+                    { rule: "9.1.6.1", condition: "Bullet strikes wholly through hard cover and continues to paper target or no-shoot", action: "Hit on paper target or no-shoot will NOT count; if unclear, ignore highest scoring hits" },
+                    { rule: "9.1.6.2", condition: "Bullet strikes wholly through hard cover and strikes down a metal target", action: "Treated as range equipment failure; competitor will be required to reshoot. See also Rule 4.7.1." },
+                    { rule: "9.1.6.3", condition: "Bullet strikes partially through hard cover and continues to paper target", action: "Hit on paper target WILL count for score or penalty" },
+                    { rule: "9.1.6.4", condition: "Bullet strikes partially through hard cover and strikes down metal target/no-shoot", action: "Fallen/hit metal target/no-shoot WILL count for score or penalty" },
+                    { rule: "9.1.7", condition: "Shots pass through target sticks and hit paper or metal targets", action: "Hits on paper or metal targets WILL count for score or penalty (target sticks not cover)" },
+                    { rule: "9.4.2", condition: "Visible hits on scoring area of paper no-shoot", action: "Penalized minus 10 points per hit, maximum 2 hits per no-shoot" }
+                ]
+            }
+        };
+
+        // Initialize
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        const searchInput = document.getElementById('searchInput');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const sectionsContainer = document.getElementById('sectionsContainer');
+        const statsContainer = document.getElementById('statsContainer');
+         const modal = document.getElementById('ruleModal');
+         const modalCloseBtn = document.getElementById('modalCloseBtn');
+         const clearBtn = document.getElementById('clearBtn');
+
+         // Event listeners
+         searchInput.addEventListener('input', (e) => {
+             searchTerm = e.target.value.toLowerCase();
+             render();
+         });
+
+         clearBtn.addEventListener('click', () => {
+             searchInput.value = '';
+             searchTerm = '';
+             render();
+             searchInput.focus();
+         });
+
+         filterButtons.forEach(btn => {
+             btn.addEventListener('click', () => {
+                 filterButtons.forEach(b => b.classList.remove('active'));
+                 btn.classList.add('active');
+                 currentFilter = btn.dataset.filter;
+                 render();
+                 updateFilterButtonCounts();
+             });
+         });
+
+         // Initialize filter button counts on page load
+         updateFilterButtonCounts();
+
+        modalCloseBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Keyboard escape to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Render functions
+        function render() {
+            const visibleSections = getVisibleSections();
+            renderStats(visibleSections);
+            renderSections(visibleSections);
+        }
+
+        function getVisibleSections() {
+            let sections = Object.values(rulesData);
+            
+            if (currentFilter !== 'all') {
+                sections = sections.filter(s => s.type === currentFilter);
+            }
+
+            if (searchTerm) {
+                sections = sections.map(section => ({
+                    ...section,
+                    rows: section.rows.filter(row => 
+                        row.rule.toLowerCase().includes(searchTerm) ||
+                        row.condition.toLowerCase().includes(searchTerm) ||
+                        row.action.toLowerCase().includes(searchTerm)
+                    )
+                })).filter(s => s.rows.length > 0);
+            }
+
+            return sections;
+        }
+
+        function renderStats(visibleSections) {
+            const totalRules = visibleSections.reduce((sum, s) => sum + s.rows.length, 0);
+
+            let html = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalRules}</div>
+                    <div class="stat-label">Rules</div>
+                </div>
+            `;
+
+            statsContainer.innerHTML = html;
+        }
+
+        function renderSections(visibleSections) {
+            if (visibleSections.length === 0) {
+                sectionsContainer.innerHTML = `
+                    <div class="no-results">
+                        <p>No rules found matching your search.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            visibleSections.forEach((section, idx) => {
+                html += renderSection(section, idx, searchTerm);
+            });
+
+            sectionsContainer.innerHTML = html;
+
+            // Add event listeners to section headers
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    this.closest('.section').classList.toggle('collapsed');
+                });
+            });
+
+            // Add event listeners to rule numbers
+            document.querySelectorAll('.rule-number').forEach(ruleBtn => {
+                ruleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const ruleNum = ruleBtn.textContent.trim();
+                    openModal(ruleNum);
+                });
+            });
+
+            // Add event listeners to inline rule numbers in action column
+            document.querySelectorAll('.rule-number-inline').forEach(ruleBtn => {
+                ruleBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const ruleNum = ruleBtn.textContent.trim();
+                    openModal(ruleNum);
+                });
+            });
+        }
+
+        function renderSection(section, idx, hasSearch) {
+            const headerClass = (hasSearch || currentFilter !== 'all') ? '' : 'collapsed';
+            let html = `
+                <div class="section ${headerClass}">
+                    <div class="section-header">
+                        <span style="flex: 1; min-width: 0; overflow-wrap: break-word;">${section.title}</span>
+                        <span class="toggle-icon">▶</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="section-description">${section.description}</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%; min-width: 50px;">Rule</th>
+                                    <th style="width: 40%; min-width: 100px;">Condition</th>
+                                    <th style="width: 40%; min-width: 100px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            section.rows.forEach(row => {
+                html += `
+                    <tr>
+                        <td><span class="rule-number">${highlightSearch(row.rule)}</span></td>
+                        <td>${stylizeTags(highlightSearch(row.condition))}</td>
+                        <td>${makeRuleNumbersClickable(stylizeTags(highlightSearch(row.action)), true)}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        function highlightSearch(text) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function makeRuleNumbersClickable(text, isActionColumn = false) {
+            // Only make rule numbers clickable in the Action column
+            if (!isActionColumn) {
+                return text;
+            }
+            
+            // Match rule numbers like 10.6.1, 8.3.1.1, 2.3.4.1 etc. but not decimals like 1.8 or 3 meters
+            // Rule numbers should have at least 3 parts separated by dots (e.g., X.Y.Z)
+            // and should NOT be preceded/followed by other digits (word boundary)
+            const ruleRegex = /\b(\d+\.\d+\.\d+(?:\.\d+)*)\b/g;
+            return text.replace(ruleRegex, '<span class="rule-number-inline">$1</span>');
+        }
+
+        function stylizeTags(text) {
+            // Replace [GRANTED] tags with styled spans (without brackets)
+            text = text.replace(/\[GRANTED\]/g, '<span class="tag-granted">GRANTED</span>');
+            // Replace [DENIED] tags with styled spans (without brackets)
+            text = text.replace(/\[DENIED\]/g, '<span class="tag-denied">DENIED</span>');
+            // Replace [REFUSED] tags with styled spans (without brackets)
+            text = text.replace(/\[REFUSED\]/g, '<span class="tag-refused">REFUSED</span>');
+            return text;
+        }
+
+        function openModal(ruleNum) {
+            // Handle rule ranges like "10.1.1-10.1.4"
+            if (ruleNum.includes('-')) {
+                const parts = ruleNum.split('-');
+                const startRule = parts[0].trim();
+                const endRule = parts[1].trim();
+                
+                // Parse start and end rule numbers
+                const startParts = startRule.split('.').map(Number);
+                const endParts = endRule.split('.').map(Number);
+                
+                // Generate all rules in the range
+                let rulesInRange = [];
+                if (startParts.length === 3 && endParts.length === 3 &&
+                    startParts[0] === endParts[0] && startParts[1] === endParts[1]) {
+                    // Range like 10.1.1-10.1.4
+                    const base = `${startParts[0]}.${startParts[1]}`;
+                    for (let i = startParts[2]; i <= endParts[2]; i++) {
+                        rulesInRange.push(`${base}.${i}`);
+                    }
+                }
+                
+                // Build modal content with all rules
+                let modalContent = '';
+                rulesInRange.forEach((rule, idx) => {
+                    const text = fullRuleText[rule] || `Rule ${rule} - Full text not available`;
+                    modalContent += text;
+                    if (idx < rulesInRange.length - 1) {
+                        modalContent += '\n\n---\n\n';
+                    }
+                });
+                
+                document.getElementById('modalRuleNumber').textContent = ruleNum;
+                document.getElementById('modalBody').textContent = modalContent;
+            } else {
+                const fullText = fullRuleText[ruleNum] || `Rule ${ruleNum} - Full text not available`;
+                document.getElementById('modalRuleNumber').textContent = ruleNum;
+                document.getElementById('modalBody').textContent = fullText;
+            }
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+         function closeModal() {
+             modal.classList.remove('active');
+             document.body.style.overflow = '';
+         }
+
+         function updateFilterButtonCounts() {
+             const filterMap = {
+                 'all': null,
+                 'warnings': 'warnings',
+                 'procedures': 'procedures',
+                 'disqualifications': 'disqualifications',
+                 'reshoots': 'reshoots',
+                 'scoring': 'scoring'
+             };
+
+             filterButtons.forEach(btn => {
+                 const filterType = btn.dataset.filter;
+                 let count = 0;
+
+                 if (filterType === 'all') {
+                     count = Object.values(rulesData).reduce((sum, section) => sum + section.rows.length, 0);
+                 } else {
+                     const section = Object.values(rulesData).find(s => s.type === filterType);
+                     if (section) {
+                         count = section.rows.length;
+                     }
+                 }
+
+                 // Get the button text without the count
+                 const originalText = btn.textContent.replace(/\s*\(\d+\)$/, '');
+                 btn.textContent = `${originalText} (${count})`;
+             });
+         }
+
+         // Initial render
+         render();
+    </script>
+</body>
+</html>
