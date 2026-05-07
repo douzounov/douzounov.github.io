@@ -110,6 +110,35 @@
             color: #999;
         }
 
+        .language-switcher {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-width: 60px;
+        }
+
+        .lang-btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        .lang-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
         .filter-buttons {
             display: flex;
             flex-wrap: wrap;
@@ -670,8 +699,13 @@
 <body>
     <div class="container">
         <header>
-            <h1>📋 IPSC Handgun Competition Rules</h1>
+            <h1 id="pageHeader">📋 IPSC Handgun Competition Rules</h1>
         </header>
+
+        <div class="language-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="bg">BG</button>
+        </div>
 
         <div class="controls">
              <div class="search-box">
@@ -694,7 +728,7 @@
 
         <footer>
             <p><strong>Document Source:</strong> IPSC Handgun Competition Rules - January 2026 Edition (Final 29 Dec 2025)</p>
-            <p style="margin-top: 8px;">Last Updated: March 13, 2026</p>
+            <p style="margin-top: 8px;">Last Updated: May 7, 2026</p>
             <p style="margin-top: 8px; font-size: 10px; color: #999;">💡 Click on any rule number to view the full text from the official rulebook</p>
         </footer>
     </div>
@@ -711,140 +745,316 @@
     </div>
 
     <script>
-        // Full rule text from PDF
-        const fullRuleText = {
-            "2.1.2.1": "2.1.2.1 Subject to the direction and approval of the Regional Director, stage(s) or range specific muzzle angles (reduced or increased) may be permitted. Violations are subject to Rule 10.5.2. Full details of the applicable angles and any conditional factors (e.g. a reduced vertical muzzle angle only applies when a finger is inside the trigger guard), should be published in advance of the match and must be included in the written stage briefings (also see Section 2.3).",
-            "2.1.3": "2.1.3 Minimum Distances – Whenever metal targets or metal hard cover are used in a course of fire, precautions must be taken so that competitors and Match Officials maintain a minimum distance of 7 meters from them while they are being shot. Where possible, this should be done with physical barriers. If Fault Lines are used to limit the approach to metal targets, they must be placed at least 8 meters from the targets so that the competitor may inadvertently fault the line and still be outside the 7 meter minimum distance (see Rule 10.4.7). Care should also be taken in respect of metal props in the line of fire.",
-            "2.2.1.5": "2.2.1.5 If a COF has a passageway visibly delineated by Fault Lines and/or a clearly demarcated shooting area, any competitor who takes a shortcut by stepping on the ground outside the passageway and/or shooting area will incur one procedural penalty for each shot fired after beginning the shortcut.",
-            "2.2.3.1": "2.2.3.1 They must be high enough and strong enough to serve the intended purpose. Unless supplemented by a shooting platform or similar, barriers of at least 1.8 meters high are deemed to extend skywards to infinity (also see Rule 10.2.11).",
-            "2.3.3.3": "2.3.3.3 A competitor who refuses to reshoot a course of fire, under this or any other Section, when so ordered by a Range Officer, will receive a zero score for that stage, irrespective of any previous attempt.",
-            "2.3.4.1": "2.3.4.1 A competitor who incurred a disqualification in a stage which is subsequently deleted, may be entitled to reinstatement, if the highest level of appeal pursued by the competitor (i.e. the Range Master or the Arbitration Committee, as the case may be), deems that the disqualification was directly attributable to the reasons for the stage being deleted.",
-            "2.4.4": "2.4.4 Dummy ammunition and live rounds, whether loose, packaged or contained in magazines or speed loaders, must not be handled in a Safety Area under any circumstances (see Rule 10.5.13).",
-            "4.7.1": "4.7.1 Range equipment must present the challenge fairly and equitably to all competitors. Range equipment failure includes, but is not limited to, the displacement of paper targets, the premature activation of metal or moving targets, the malfunction of mechanically or electrically operated equipment, and the failure of props such as openings, ports, and barriers.",
-            "4.7.2": "4.7.2 A competitor who is unable to complete a course of fire due to range equipment failure, or if a metal or moving target was not reset prior to his attempt at a course of fire, must be required to reshoot the course of fire after corrective actions have been taken.",
-            "4.7.2.1": "4.7.2.1 Unrestored paper targets are not range equipment failure (see Rule 9.1.4).",
-            "4.7.2.2": "4.7.2.2 If a Range Master deems that one or more targets in a course of fire are faulty and/or have been presented in a manner significantly different to earlier presentations, he may offer a reshoot to the affected competitor(s).",
-            "5.1.6": "5.1.6 Firearms must be serviceable and safe. Range Officers may demand examination of a competitor's firearm or allied equipment, at any time, to check they are functioning safely. If any such item is declared unserviceable or unsafe by a Range Officer, it must be withdrawn from the match until the item is repaired to the satisfaction of the Range Master (also see Rule 5.7.5).",
-            "5.1.10": "5.1.10 Handguns with shoulder stocks and/or fore grips of any kind are prohibited (see Rule 10.5.16).",
-            "5.1.11": "5.1.11 Firearms offering \"burst\" and/or fully automatic operation (i.e. whereby more than one round can be discharged on a single pull or activation of the trigger) are prohibited. Firearms fitted with a trigger where one round is discharged upon pulling the trigger and another round discharged upon releasing the trigger are also prohibited (see Rule 10.5.16).",
-            "5.2.1.2": "5.2.1.2 Handguns carried in a holster must have an empty magazine well, and the hammer or striker must be decocked. Violations will incur a warning for the first occurrence, but will be subject to Rule 10.6.1 for subsequent occurrences in the same match.",
-            "5.2.2": "5.2.2 Handling – Except when within the boundaries of a Safety Area, or when under the supervision and direct command of a Range Officer, competitors must not handle their firearms. The word \"handle\" includes holstering or unholstering a firearm, even if it is concealed by a protective cover, and/or adding or removing it to/from the competitor's person while it is wholly or partially holstered. Violations are subject to Rule 10.5.1. Exception: a competitor, who is under the supervision of a Range Officer and mistakenly unholsters his firearm while awaiting the \"Load And Make Ready\" or \"Make Ready\" command will (provided that no other safety infraction or prohibited activity has been committed) incur a warning for the first occurrence, but will be subject to Rule 10.5.1 for subsequent occurrences in the same match.",
-            "5.2.5": "5.2.5 Where a Division specifies a maximum distance that a competitor's handgun and equipment may extend away from a competitor's body, a Range Officer may check compliance by measuring the closest distance between the outer surface of the competitor's belt and the center of the longest dimension of the handgun grip and/or any reloading devices.\n\n5.2.5.1 The measurement is to be taken while the competitor is standing relaxed (see Appendix E2).\n\n5.2.5.2 Any competitor who fails the foregoing test prior to the Start Signal will be required to immediately adjust his holster or allied equipment to comply with the requirements of the relevant Division. The Range Master may make allowances for variations in these requirements due to anatomical considerations. Some competitors may not be able to fully comply.",
-            "5.2.7.3": "5.2.7.3 A holster which permits the muzzle of a holstered handgun to point further than 1 meter from the competitor's feet while standing relaxed;",
-            "5.4.3": "5.4.3 If a Range Officer notices that a competitor has lost or displaced their eye or ear protection during a course of fire, or has commenced a course of fire without them, the Range Officer must immediately stop the competitor who will be required to reshoot the course of fire after the protective devices have been restored.",
-            "5.5.4": "5.5.4 Metal piercing, incendiary and/or tracer ammunition is prohibited at IPSC matches (see Rule 10.5.16).",
-            "5.5.5": "5.5.5 Ammunition which discharges more than one bullet or other scoring projectile from a single round is prohibited (see Rule 10.5.16).",
-            "5.5.6": "5.5.6 Ammunition deemed unsafe by a Range Officer must be immediately withdrawn from the match (see Rule 10.5.16).",
-            "5.7.5": "5.7.5 Where the firearm has failed as above, the competitor must not be permitted to reshoot the course of fire. This includes instances where a firearm is declared unserviceable or unsafe during a course of fire (see Rule 5.1.6).",
-            "5.7.6.2": "5.7.6.2 If the Range Officer discovers that the suspected safety problem does not exist, the competitor will be required to reshoot the stage.",
-            "5.7.6.3": "5.7.6.3 A competitor who self-stops due to a suspected or actual squib load is not entitled to a reshoot.",
-            "5.8.1.2": "5.8.1.2 Official match ammunition purchased by competitors is deemed to be competitor equipment (see Section 5.7), therefore malfunctions will not be grounds for a reshoot and/or an appeal to Arbitration.",
-            "6.2.3": "6.2.3 Prior to the commencement of a match, each competitor must declare one Division for score, and Match Officials should check competitor equipment compliance with the declared Division, prior to the competitor making an attempt at any of the courses of fire. This is a service to assist competitors verify that their equipment, in the configuration as presented, is in compliance with their declared Division. However, competitors always remain subject to the provisions of Rule 6.2.5.1.",
-            "6.2.5.1": "6.2.5.1 A competitor who fails to satisfy the maximum distance of handgun and allied equipment from his belt (see Appendices D1-6), or the foremost limit for handgun, holster and allied equipment (see Appendix E2), requirements of a declared Division after the Start Signal will incur a warning for the first offense. Subsequent occurrences in the same match will result in the competitor being placed in Open Division, if available, otherwise the competitor's scores will not be entered into match results. Competitors already registered in Open Division who fail to comply with the above requirements after the Start Signal will incur a warning for the first offense, but will not have their scores entered into match results for subsequent occurrences in the same match. A competitor who fails to satisfy the equipment or other requirements, with the exception of those listed above, of a declared Division after the Start Signal, will be placed in Open Division, if available, otherwise the competitor's scores will not be entered into match results. Competitors already registered in Open Division who fail to comply with the requirements, with the exception of those listed above, of Open Division after the Start Signal will not have their scores entered into match results. This rule does not apply for measurements done under Rule 5.2.5, either before (see Rule 6.2.3) or after the competitor has shot the stage.",
-            "8.1.1.2": "8.1.1.2 Double/Selective Action: hammer fully down and cylinder closed. If self-loading pistols prepare \"magazine well and chamber empty\", revolvers prepare with an empty cylinder, otherwise revolvers prepare with a fully loaded cylinder.",
-            "8.1.2.5": "8.1.2.5 If a handgun has a decocking lever, that alone must be used to decock the handgun, without touching the trigger. If a handgun does not have a decocking lever, the hammer must be safely and manually lowered all the way forward (i.e. not just to a \"half-cock notch\" or to another similar intermediary position).",
-            "8.3.1": "8.3.1 \"Load And Make Ready\" (or \"Make Ready\" for starts with an unloaded firearm) – This command signifies the start of \"the Course of Fire\". Under the direct supervision of the Range Officer the competitor must face downrange, or in a safe direction as specified by the Range Officer, fit eye and ear protection, and prepare the firearm in accordance with the written stage briefing. The competitor must then assume the required start position. At this point, the Range Officer will proceed.",
-            "8.3.1.1": "8.3.1.1 Once the appropriate command has been given, the competitor must not move away from the start location prior to issuance of the Start Signal without the prior approval, and under the direct supervision, of the Range Officer. Violation will result in a warning for the first offense and may result in the application of Rule 10.6.1 for a subsequent offense in the same match.",
-            "8.3.7": "8.3.7 \"If Clear, Hammer Down, Holster\" – After issuance of this command, the competitor must not resume shooting (see Rule 10.6.1). While continuing to point the handgun safely downrange, the competitor must perform a final safety check of the handgun as follows:\n\n8.3.7.1 Self-loaders – Release the slide and pull the trigger (without touching the hammer or decocker, if any). If a handgun has a device which requires a magazine be inserted to enable the trigger to be pulled, the competitor must, on issuance of the above command, inform the Range Officer, who will direct and supervise the use, and subsequent removal, of an empty magazine to facilitate this process.\n\n8.3.7.2 Revolvers – Close the empty cylinder (without touching the hammer, if any).\n\n8.3.7.3 If the gun proves to be clear, the competitor must holster his handgun. Once the competitor's hands are clear of the holstered handgun, the course of fire is deemed to have ended.\n\n8.3.7.4 If the gun does not prove to be clear, the Range Officer will resume the commands from Rule 8.3.6 (also see Rule 10.4.3).",
-            "8.3.7.1": "8.3.7.1 Self-loaders – Release the slide and pull the trigger (without touching the hammer or decocker, if any). If a handgun has a device which requires a magazine be inserted to enable the trigger to be pulled, the competitor must, on issuance of the above command, inform the Range Officer, who will direct and supervise the use, and subsequent removal, of an empty magazine to facilitate this process.",
-            "8.5.1": "8.5.1 Except when the competitor is actually aiming or shooting at targets, all movement must be accomplished with the fingers visibly outside the trigger guard and the external safety should be applied. The firearm must be pointed in a safe direction. \"Movement\" is defined as any of the actions below:\n\n8.5.1.1 Taking more than one step in any direction.\n\n8.5.1.2 Changing shooting position (e.g. from standing to kneeling, from seated to standing etc.).",
-            "8.6.1": "8.6.1 No assistance of any kind can be given to a competitor during a course of fire, except that any Range Officer assigned to a stage may issue safety warnings to a competitor at any time. Such warnings will not be grounds for the competitor to be awarded a reshoot.",
-            "8.6.2": "8.6.2 Any person providing assistance to a competitor during a course of fire without the prior approval of a Range Officer (and the competitor receiving such assistance) may, at the discretion of a Range Officer, incur a procedural penalty for that stage and/or be subject to Section 10.6.",
-            "8.6.3": "8.6.3 Any person verbally or otherwise interfering with a competitor during his attempt at a course of fire may be subject to Section 10.6. If the Range Officer believes that the interference significantly affected the competitor, he must report the incident to the Range Master, who may, at his discretion, offer the affected competitor a reshoot.",
-            "8.6.4": "8.6.4 In the event that inadvertent contact with the Range Officer, or another external influence, has interfered with the competitor during a course of fire, the Range Officer may offer the competitor a reshoot of the course of fire. The competitor must accept or decline the offer prior to seeing either the time or the score from the initial attempt. However, if the competitor commits a safety infraction during any such interference, the provisions of Sections 10.4 and 10.5 may still apply.",
-            "8.6.5": "8.6.5 In the event that any person appears downrange from the competitor during a course of fire, it must immediately be terminated and the competitor required to reshoot the course of fire. If the competitor notices the problem before the Range Officer, he must immediately self-stop, cease firing, point his firearm in a safe direction and wait for further instructions from the Range Officer. However, if the competitor fails to comply with the above procedure, the provisions of Sections 10.4 and 10.5 will apply.",
-            "8.7.1": "8.7.1 Competitors are prohibited from taking a sight picture and/or dry firing prior to the Start Signal. Violation will result in a warning for the first occurrence and one procedural penalty for each subsequent occurrence in the same match. Competitors may, while pointing their firearm directly at the ground in front of them, adjust electronic sights.",
-            "8.7.2": "8.7.2 Competitors are prohibited from using any sighting aid (e.g. the whole or part of an imitation or replica firearm, any part of a real firearm including any accessories thereof etc.), except for their own hands, while conducting their inspection (\"walkthrough\") of a course of fire. Violations will incur one procedural penalty per occurrence (also see Rule 10.5.1).",
-            "8.7.3": "8.7.3 No person is permitted to enter or move through a course of fire without the prior approval of a Range Officer assigned to that course of fire, or the Range Master. Violations will incur a warning for the first offense but may be subject to the provisions of Section 10.6 for subsequent offenses.",
-            "9.1.1": "9.1.1 Approaching Targets – While scoring is in progress, competitors or their delegate must not approach any target closer than 1 meter without the authorization of the Range Officer. Violation will result in a warning for the first offense, but the competitor or his delegate may, at the discretion of the Range Officer, incur a procedural penalty for subsequent occurrences in the same match.",
-            "9.1.2": "9.1.2 Touching Targets – While scoring is in progress competitors or their delegate must not touch, gauge or otherwise interfere with any target without the authorization of the Range Officer. Should a Range Officer deem that a competitor or their delegate has influenced or affected the scoring process due to such interference, the Range Officer may:\n\n9.1.2.1 Score the affected target as a missed target; or\n\n9.1.2.2 Impose penalties for any affected no-shoots.",
-            "9.1.2.1": "9.1.2.1 Score the affected target as a missed target; or",
-            "9.1.2.2": "9.1.2.2 Impose penalties for any affected no-shoots.",
-            "9.1.3": "9.1.3 Prematurely Patched Targets – If a target is prematurely patched or taped, preventing the determination of the actual score, the Range Officer must order the competitor to reshoot the course of fire.",
-            "9.1.4": "9.1.4 Unrestored Targets – If, following completion of a course of fire by a previous competitor, one or more targets have not been properly patched or taped for the competitor being scored, the Range Officer must judge whether or not an accurate score can be determined. If there are extra scoring hits or questionable penalty hits thereon, and it is not obvious which hits were made by the competitor being scored, the affected competitor must be ordered to reshoot the course of fire.",
-            "9.1.4.1": "9.1.4.1 In the event that patches or tape applied to a restored paper target are accidentally blown off by wind, muzzle blast or another reason, and it is not obvious to the Range Officer which hits were made by the competitor being scored, the competitor will be required to reshoot the course of fire.",
-            "9.1.4.2": "9.1.4.2 A competitor who hesitates or self-stops during his attempt at a course of fire, due to a belief that one or more targets have not been restored or reset, is not entitled to a reshoot.",
-            "9.1.5.1": "9.1.5.1 Bullet strikes wholly within the scoring area of a paper target, and continues on to strike the scoring area of another paper target, the hit on the subsequent paper target will not count for score or penalty, as the case may be.",
-            "9.1.5.2": "9.1.5.2 Bullet strikes wholly within the scoring area of a paper target, and continues on to hit or strike down a metal target, this will be treated as range equipment failure. The competitor will be required to reshoot the course of fire, after it has been restored.",
-            "9.1.5.3": "9.1.5.3 Bullet strikes partially within the scoring area of a paper or metal target, and continues on to strike the scoring area of another paper target, the hit on the subsequent paper target will also count for score or penalty, as the case may be.",
-            "9.1.5.4": "9.1.5.4 Bullet strikes partially within the scoring area of a paper or metal target, and continues on to strike down (or hit the scoring area of) another metal target, the fallen (or hit on the) subsequent metal target will also count for score or penalty, as the case may be.",
-            "9.1.6.1": "9.1.6.1 Bullet strikes wholly within hard cover, and continues on to strike the scoring area of a scoring paper target or no-shoot, the hit on the paper target or no-shoot will not count for score or penalty, as the case may be. If it cannot be determined which hit(s) on the scoring area of a scoring paper target or no-shoot are the result of shots fired through hard cover, the scoring paper target or noshoot will be scored by ignoring the applicable number of highest scoring hit(s).",
-            "9.1.6.2": "9.1.6.2 Bullet strikes wholly within hard cover, and continues on to hit or strike down a metal target, this will be treated as range equipment failure (see Rule 4.7.1). The competitor will be required to reshoot the course of fire, after it has been restored.",
-            "9.1.6.3": "9.1.6.3 Bullet strikes partially within hard cover, and continues on to strike the scoring area of a paper target, the hit on that paper target will count for score or penalty, as the case may be.",
-            "9.1.6.4": "9.1.6.4 Bullet strikes partially within hard cover, and continues on to strike down a scoring metal target, the fallen target will count for score. If a bullet strikes partially within hard cover, and continues on to strike down or hit a metal no-shoot, the fallen no-shoot or hit thereon will count for penalty.",
-            "9.1.7": "9.1.7 Target Sticks – Are neither Hard Cover nor Soft Cover. Shots which have passed wholly or partially through target sticks and which hit a paper or metal target will count for score or penalty, as the case may be.",
-            "9.4.2": "9.4.2 Each hit visible on the scoring area of a paper no-shoot will be penalized minus 10 points, up to a maximum of 2 hits per no-shoot.",
-            "9.7.4": "9.7.4 A score sheet signed by both a competitor and a Range Officer is conclusive evidence that the course of fire has been completed, and that the time, scores and penalties recorded on the score sheet, are accurate and uncontested. The signed score sheet is deemed to be a definitive document and, with the exception of the mutual consent of the competitor and the signatory Range Officer, or due to an arbitration decision, the score sheet will only be changed to correct arithmetical errors or to add procedural penalties under Rule 8.6.2.",
-            "9.7.6": "9.7.6 In the event that a reshoot is not possible for any reason, the following actions will prevail:\n\n9.7.6.1 If the time is missing, the competitor will receive a zero score for the stage.\n\n9.7.6.2 If insufficient hits or misses have been recorded on the score sheet, those which have been recorded will be deemed complete and conclusive.\n\n9.7.6.3 If excessive hits or misses have been recorded on the score sheet, the highest value scoring hits recorded will be used.\n\n9.7.6.4 Procedural penalties recorded on the score sheet will be deemed complete and conclusive, except where Rule 8.6.2 applies.\n\n9.7.6.5 If the identity of the competitor is missing from a score sheet, it must be referred to the Range Master, who must take whatever action he deems necessary to rectify the situation.",
-            "9.7.6.1": "9.7.6.1 If the time is missing, the competitor will receive a zero score for the stage.",
-            "9.7.6.2": "9.7.6.2 If insufficient hits or misses have been recorded on the score sheet, those which have been recorded will be deemed complete and conclusive.",
-            "9.7.6.3": "9.7.6.3 If excessive hits or misses have been recorded on the score sheet, the highest value scoring hits recorded will be used.",
-            "9.7.6.4": "9.7.6.4 Procedural penalties recorded on the score sheet will be deemed complete and conclusive, except where Rule 8.6.2 applies.",
-            "9.7.6.5": "9.7.6.5 If the identity of the competitor is missing from a score sheet, it must be referred to the Range Master, who must take whatever action he deems necessary to rectify the situation.",
-            "9.7.8": "9.7.8 No person, other than an authorized Match Official, is permitted to handle an original score sheet retained on a stage, or at any other place, after it has been signed by a competitor and a Range Officer, without the prior approval of the Range Officer or personnel directly involved with Stats. Violations will incur a warning for the first offense, but may be subject to Section 10.6 for subsequent occurrences in the same match.",
-            "9.9.2": "9.9.2 Moving targets which do not comply with the above criteria are disappearing and will not incur failure to engage or miss penalties unless a competitor fails to activate the mechanism which initiates the target movement before or when firing his last shot for that course of fire.",
-            "9.10.2": "9.10.2 If, in the opinion of an Arbitration Committee, the time credited to a competitor for a course of fire is deemed to be unrealistic, the competitor will be required to reshoot the course of fire (see Rule 9.7.4).",
-            "10.1.1": "10.1.1 Procedural penalties are imposed when a competitor fails to comply with procedures specified in a written stage briefing and/or is found to be in violation of other general rules. The Range Officer imposing the procedural penalties must clearly record the number of penalties, and the reason why they were imposed, on the competitor's score sheet.",
-            "10.1.2": "10.1.2 Procedural penalties are assessed at minus 10 points each.",
-            "10.1.3": "10.1.3 A competitor disputing the application or number of procedural penalties may appeal to the Chief Range Officer and/or Range Master. A competitor who continues to be aggrieved may then lodge an appeal for arbitration.",
-            "10.1.4": "10.1.4 Procedural penalties cannot be nullified by further competitor action. For example, a competitor who fires a shot at a target while faulting a line will still incur the applicable penalties even though he subsequently shoots at the same target while not faulting the line.",
-            "10.2.1": "10.2.1 A competitor who fires shots while any part of their body is touching the ground or any object beyond a Fault Line will receive 1 procedural penalty for each occurrence. No penalty is assessed if a competitor does not fire any shots while faulting except when Rule 2.2.1.5 applies.\n\n10.2.1.1 However, if the competitor has gained a significant advantage on any target(s) while faulting, he may instead be assessed 1 procedural penalty for each shot fired at the subject target(s) while faulting.",
-            "10.2.2": "10.2.2 A competitor who fails to comply with a procedure specified in the written stage briefing will incur 1 procedural penalty for each occurrence. However, if a competitor has gained a significant advantage during non-compliance, the competitor may be assessed 1 procedural penalty for each shot fired, instead of a single penalty (e.g. firing one or more shots contrary to the required location, shooting position or stance).",
-            "10.2.3": "10.2.3 Where multiple penalties are assessed in the above cases, they must not exceed the maximum number of scoring hits that can be attained by the competitor. For example, a competitor who gains an advantage while faulting a Fault Line where only 4 metal targets are visible will receive 1 procedural penalty for each shot fired while faulting, up to a maximum of 4 procedural penalties, regardless of the number of shots actually fired.",
-            "10.2.4": "10.2.4 A competitor who fails to comply with a mandatory reload will incur 1 procedural penalty for each shot fired after the point where the reload was required until a reload is performed.",
-            "10.2.5": "10.2.5 In a Cooper Tunnel, a competitor who disturbs one or more pieces of the overhead material will receive 1 procedural penalty for each piece of overhead material which falls. Overhead material which falls as a result of the competitor bumping or striking the uprights, or as a result of muzzle gases or recoil, will not be penalized.",
-            "10.2.6": "10.2.6 A competitor who is creeping (e.g. moving hands towards the firearm, a reloading device or ammunition) or physically moving to a more advantageous shooting position or stance after the \"Standby\" command and prior to issuance of the Start Signal, will incur 1 procedural penalty. If the Range Officer can stop the competitor in time, a warning will be issued for the first offense and the competitor will be restarted.",
-            "10.2.7": "10.2.7 A competitor who fails to engage any scoring target with at least one round will incur 1 procedural penalty per target, plus the applicable number of misses, except where the provisions of Rule 9.9.2 apply.",
-            "10.2.8": "10.2.8 If a course of fire (or part thereof) stipulates shooting strong or weak hand only, a competitor will incur one procedural penalty for each occurrence of touching the handgun (or scooping it from a table etc.) with the other hand after the Start Signal (or from the point where single hand shooting has been stipulated). Exceptions are releasing an external safety (without scooping), reloading or correcting a malfunction. However, the procedural penalty will be applied on a \"per shot fired\" basis when a competitor uses the other hand or arm to:\n\n10.2.8.1 support the handgun or the stipulated wrist, hand or arm while firing shots;\n\n10.2.8.2 increase stability on the ground, a barricade or another prop while firing shots.",
-            "10.2.8.1": "10.2.8.1 support the handgun or the stipulated wrist, hand or arm while firing shots;",
-            "10.2.8.2": "10.2.8.2 increase stability on the ground, a barricade or another prop while firing shots.",
-            "10.2.9": "10.2.9 A competitor who leaves a shooting location may return and shoot again from the same location provided they do so safely. However, written stage briefings for Classifiers and Level I & II matches may prohibit such actions, in which case 1 procedural penalty per shot fired will apply.",
-            "10.2.10": "10.2.10 Special penalty: A competitor unable to fully execute any part of a course of fire due to incapacity or injury may, prior to making his attempt at the course of fire, request that the Range Master apply a penalty in lieu of the stated course requirement.\n\n10.2.10.1 If the request is approved by the Range Master, he must state, in advance of the competitor attempting the course of fire, the extent of the special penalty, ranging from 1% to 20% of the competitor's points \"as shot\", to be deducted.\n\n10.2.10.2 Alternatively, the Range Master may waive application of any penalties in respect of a competitor who, due to having a significant physical disability, is unable to comply with the stated course requirement.\n\n10.2.10.3 If the request is denied by the Range Master, normal procedural penalties will apply.",
-            "10.2.11": "10.2.11 A competitor who fires shots over a barrier constructed to a height of at least 1.8 meters will incur 1 procedural penalty for each shot fired (also see Rule 2.2.3.1).",
-            "10.3.1": "10.3.1 A competitor who commits a safety infraction or any other prohibited activity during an IPSC match will be disqualified, and will be prohibited from attempting any remaining courses of fire regardless of the schedule or physical layout of the match, pending the verdict of any appeal submitted in accordance with Chapter 11 of these rules.",
-            "10.4.1": "10.4.1 A shot, which travels over a backstop, a berm or in any other direction, specified in the written stage briefing by the match organizers as being unsafe. Note that a competitor who legitimately fires a shot at a target, which then travels in an unsafe direction, will not be disqualified, but the provisions of Section 2.3 may apply.",
-            "10.4.2": "10.4.2 A shot which strikes the ground within 3 meters of the competitor, except when shooting at a paper target closer than 3 meters to the competitor. A shot which strikes the ground within 3 meters of the competitor due to a \"squib\" load is exempt from this rule.",
-            "10.4.3": "10.4.3 A shot which occurs while actually loading, reloading or unloading a firearm. This includes any shot fired during the procedures outlined in Rules 8.3.1 and 8.3.7 (also see Rule 10.5.10).\n\n10.4.3.1 Exception – a detonation, which occurs while unloading a firearm, is not considered a shot or discharge subject to a disqualification. However, Rule 5.1.6 may apply.",
-            "10.4.3.1": "10.4.3.1 Exception – a detonation, which occurs while unloading a firearm, is not considered a shot or discharge subject to a disqualification. However, Rule 5.1.6 may apply.",
-            "10.4.4": "10.4.4 A shot which occurs during remedial action in the case of a malfunction.",
-            "10.4.5": "10.4.5 A shot which occurs while transferring a handgun between hands.",
-            "10.4.6": "10.4.6 A shot which occurs during movement, except while actually shooting at targets.",
-            "10.4.7": "10.4.7 A shot fired at a metal target from a distance of less than 7 meters, measured from the front of the target to the nearest part of the competitor's body in contact with the ground (see Rule 2.1.3).",
-            "10.4.8": "10.4.8 In this Section, if it can be established that the cause of the discharge is due to a broken or defective part of the firearm, the competitor has not committed any safety infraction in this Section, and a disqualification will not be invoked, but the competitor's scores for that stage will be zero.\n\n10.4.8.1 The firearm must be immediately presented for inspection to the Range Master or his delegate, who will inspect the firearm and carry out any tests necessary to establish that a broken or defective part caused the discharge. A competitor may not later appeal a disqualification for an accidental discharge due to a broken or defective part if they fail to present the firearm for inspection prior to leaving the course of fire.",
-            "10.5.1": "10.5.1 Handling a firearm at any time except when in a designated Safety Area or when under the supervision of, and in response to a direct command issued by, a Range Officer (limited exception: see Rule 5.2.2).",
-            "10.5.2": "10.5.2 Allowing the muzzle of a firearm to point uprange, or past the default, or specific safe angles of fire during a course of fire, (limited exceptions: see Rules 2.1.2.1, 5.2.7.3 and 10.5.7).",
-            "10.5.3": "10.5.3 If at any time during the course of fire, a competitor drops his firearm or causes it to fall, loaded or not. Note that a competitor who, for any reason during a course of fire, safely and intentionally places the firearm on the ground or other stable object will not be disqualified provided:\n\n10.5.3.1 The competitor maintains constant physical contact with the firearm, until it is placed firmly and securely on the ground or another stable object; and\n\n10.5.3.2 The competitor remains within 1 meter of the firearm at all times (except where the firearm is placed at a greater distance, under the supervision of a Range Officer, in order to comply with a start position); and\n\n10.5.3.3 The provisions of Rule 10.5.2 do not occur; and\n\n10.5.3.4 The firearm is in the ready condition as specified in Section 8.1; or\n\n10.5.3.5 The firearm is unloaded and the action is open.",
-            "10.5.3.1": "10.5.3.1 The competitor maintains constant physical contact with the firearm, until it is placed firmly and securely on the ground or another stable object; and",
-            "10.5.3.2": "10.5.3.2 The competitor remains within 1 meter of the firearm at all times (except where the firearm is placed at a greater distance, under the supervision of a Range Officer, in order to comply with a start position); and",
-            "10.5.3.3": "10.5.3.3 The provisions of Rule 10.5.2 do not occur; and",
-            "10.5.3.4": "10.5.3.4 The firearm is in the ready condition as specified in Section 8.1; or",
-            "10.5.3.5": "10.5.3.5 The firearm is unloaded and the action is open.",
-            "10.5.4": "10.5.4 Drawing or holstering a handgun within the confines of a tunnel.",
-            "10.5.5": "10.5.5 Allowing the muzzle of a handgun to point at any part of the competitor's body during a course of fire (i.e. sweeping). A disqualification is not applicable if sweeping occurs while drawing or re-holstering a gun, provided the competitor's fingers are clearly outside the trigger guard.",
-            "10.5.6": "10.5.6 Allowing the muzzle of a firearm to point at any part of another person's body (e.g. Match Official or spectator) during a course of fire. A disqualification is not applicable if the problem is due to another person appearing downrange from the competitor during a course of fire, provided that the competitor complies with the provisions of Rule 8.6.5.",
-            "10.5.7": "10.5.7 Allowing the muzzle of a loaded handgun to point rearwards uprange beyond a radius of 1 meter from a competitor's feet during drawing or re-holstering. The 1 meter concession only applies when a competitor is facing directly downrange.",
-            "10.5.8": "10.5.8 Wearing or using more than one firearm during a course of fire.",
-            "10.5.9": "10.5.9 Failure to keep the finger outside the trigger guard while clearing a malfunction where the competitor clearly moves the firearm away from aiming at targets.",
-            "10.5.10": "10.5.10 Failure to keep the finger outside the trigger guard during loading, reloading, or unloading except where specifically permitted (see Rules 8.1.2.5, 8.3.7.1 and 8.7.1).",
-            "10.5.11": "10.5.11 Failure to keep the finger outside the trigger guard during movement in accordance with Rule 8.5.1.",
-            "10.5.12": "10.5.12 Having a loaded and holstered handgun, in any of the following conditions:\n\n10.5.12.1 A single action self-loading pistol with the chamber loaded and the safety not applied.\n\n10.5.12.2 A double action or selective action pistol with the hammer cocked and the safety not applied.\n\n10.5.12.3 A revolver with the hammer cocked.",
-            "10.5.12.1": "10.5.12.1 A single action self-loading pistol with the chamber loaded and the safety not applied.",
-            "10.5.12.2": "10.5.12.2 A double action or selective action pistol with the hammer cocked and the safety not applied.",
-            "10.5.12.3": "10.5.12.3 A revolver with the hammer cocked.",
-            "10.5.13": "10.5.13 Handling live or dummy ammunition in a Safety Area, contrary to Rule 2.4.4.\n\n10.5.13.1 The word \"handling\" does not preclude competitors from entering a Safety Area with ammunition in magazines or speed loaders on their belt, in their pockets or in their range bag, provided the competitor does not physically remove the loaded magazines or loaded speed loaders from their retaining or storage device while within the Safety Area.",
-            "10.5.14": "10.5.14 Having a loaded firearm other than when specifically authorized by a Range Officer.",
-            "10.5.15": "10.5.15 Retrieving a dropped firearm. Dropped firearms must always be retrieved by a Range Officer who will, after checking and/or clearing the firearm, place it directly into the competitor's gun case, gun bag or holster. Dropping an unloaded firearm or causing it to fall outside of a course of fire is not an infraction. However, a competitor who retrieves a dropped firearm will receive a disqualification.",
-            "10.5.16": "10.5.16 Using prohibited and/or unsafe ammunition (see Rules 5.5.4, 5.5.5 and 5.5.6), and/or using a prohibited firearm (see Rules 5.1.10 and 5.1.11).",
-            "10.6.1": "10.6.1 Competitors will be disqualified for conduct which a Range Officer deems to be unsportsmanlike. Examples include, but are not limited to, cheating, dishonesty, failing to comply with the reasonable directions of a Match Official, or any behavior likely to bring the sport into disrepute. The Range Master must be notified as soon as possible.",
-            "10.6.2": "10.6.2 A competitor who is deemed by a Range Officer to have intentionally removed or caused the loss of eye or ear protection in order to gain a reshoot or advantage will be disqualified.",
-            "10.7.3": "10.7.3 Except when used for medicinal purposes, competitors and officials at matches must not be affected by drugs (including alcohol) of any sort during matches. Any person, who in the opinion of the Range Master is visibly under the influence of any of the items described herein, will be disqualified from the match and may be required to leave the range."
+        const translations = {
+            en: {
+                fullRuleText: {
+                "2.1.2.1": "2.1.2.1 Subject to the direction and approval of the Regional Director, stage(s) or range specific muzzle angles (reduced or increased) may be permitted. Violations are subject to Rule 10.5.2. Full details of the applicable angles and any conditional factors (e.g. a reduced vertical muzzle angle only applies when a finger is inside the trigger guard), should be published in advance of the match and must be included in the written stage briefings (also see Section 2.3).",
+                "2.1.3": "2.1.3 Minimum Distances – Whenever metal targets or metal hard cover are used in a course of fire, precautions must be taken so that competitors and Match Officials maintain a minimum distance of 7 meters from them while they are being shot. Where possible, this should be done with physical barriers. If Fault Lines are used to limit the approach to metal targets, they must be placed at least 8 meters from the targets so that the competitor may inadvertently fault the line and still be outside the 7 meter minimum distance (see Rule 10.4.7). Care should also be taken in respect of metal props in the line of fire.",
+                "2.2.1.5": "2.2.1.5 If a COF has a passageway visibly delineated by Fault Lines and/or a clearly demarcated shooting area, any competitor who takes a shortcut by stepping on the ground outside the passageway and/or shooting area will incur one procedural penalty for each shot fired after beginning the shortcut.",
+                "2.2.3.1": "2.2.3.1 They must be high enough and strong enough to serve the intended purpose. Unless supplemented by a shooting platform or similar, barriers of at least 1.8 meters high are deemed to extend skywards to infinity (also see Rule 10.2.11).",
+                "2.3.3.3": "2.3.3.3 A competitor who refuses to reshoot a course of fire, under this or any other Section, when so ordered by a Range Officer, will receive a zero score for that stage, irrespective of any previous attempt.",
+                "2.3.4.1": "2.3.4.1 A competitor who incurred a disqualification in a stage which is subsequently deleted, may be entitled to reinstatement, if the highest level of appeal pursued by the competitor (i.e. the Range Master or the Arbitration Committee, as the case may be), deems that the disqualification was directly attributable to the reasons for the stage being deleted.",
+                "2.4.4": "2.4.4 Dummy ammunition and live rounds, whether loose, packaged or contained in magazines or speed loaders, must not be handled in a Safety Area under any circumstances (see Rule 10.5.13).",
+                "4.7.1": "4.7.1 Range equipment must present the challenge fairly and equitably to all competitors. Range equipment failure includes, but is not limited to, the displacement of paper targets, the premature activation of metal or moving targets, the malfunction of mechanically or electrically operated equipment, and the failure of props such as openings, ports, and barriers.",
+                "4.7.2": "4.7.2 A competitor who is unable to complete a course of fire due to range equipment failure, or if a metal or moving target was not reset prior to his attempt at a course of fire, must be required to reshoot the course of fire after corrective actions have been taken.",
+                "4.7.2.1": "4.7.2.1 Unrestored paper targets are not range equipment failure (see Rule 9.1.4).",
+                "4.7.2.2": "4.7.2.2 If a Range Master deems that one or more targets in a course of fire are faulty and/or have been presented in a manner significantly different to earlier presentations, he may offer a reshoot to the affected competitor(s).",
+                "5.1.6": "5.1.6 Firearms must be serviceable and safe. Range Officers may demand examination of a competitor's firearm or allied equipment, at any time, to check they are functioning safely. If any such item is declared unserviceable or unsafe by a Range Officer, it must be withdrawn from the match until the item is repaired to the satisfaction of the Range Master (also see Rule 5.7.5).",
+                "5.1.10": "5.1.10 Handguns with shoulder stocks and/or fore grips of any kind are prohibited (see Rule 10.5.16).",
+                "5.1.11": "5.1.11 Firearms offering \"burst\" and/or fully automatic operation (i.e. whereby more than one round can be discharged on a single pull or activation of the trigger) are prohibited. Firearms fitted with a trigger where one round is discharged upon pulling the trigger and another round discharged upon releasing the trigger are also prohibited (see Rule 10.5.16).",
+                "5.2.1.2": "5.2.1.2 Handguns carried in a holster must have an empty magazine well, and the hammer or striker must be decocked. Violations will incur a warning for the first occurrence, but will be subject to Rule 10.6.1 for subsequent occurrences in the same match.",
+                "5.2.2": "5.2.2 Handling – Except when within the boundaries of a Safety Area, or when under the supervision and direct command of a Range Officer, competitors must not handle their firearms. The word \"handle\" includes holstering or unholstering a firearm, even if it is concealed by a protective cover, and/or adding or removing it to/from the competitor's person while it is wholly or partially holstered. Violations are subject to Rule 10.5.1. Exception: a competitor, who is under the supervision of a Range Officer and mistakenly unholsters his firearm while awaiting the \"Load And Make Ready\" or \"Make Ready\" command will (provided that no other safety infraction or prohibited activity has been committed) incur a warning for the first occurrence, but will be subject to Rule 10.5.1 for subsequent occurrences in the same match.",
+                "5.2.5": "5.2.5 Where a Division specifies a maximum distance that a competitor's handgun and equipment may extend away from a competitor's body, a Range Officer may check compliance by measuring the closest distance between the outer surface of the competitor's belt and the center of the longest dimension of the handgun grip and/or any reloading devices.\n\n5.2.5.1 The measurement is to be taken while the competitor is standing relaxed (see Appendix E2).\n\n5.2.5.2 Any competitor who fails the foregoing test prior to the Start Signal will be required to immediately adjust his holster or allied equipment to comply with the requirements of the relevant Division. The Range Master may make allowances for variations in these requirements due to anatomical considerations. Some competitors may not be able to fully comply.",
+                "5.2.7.3": "5.2.7.3 A holster which permits the muzzle of a holstered handgun to point further than 1 meter from the competitor's feet while standing relaxed;",
+                "5.4.3": "5.4.3 If a Range Officer notices that a competitor has lost or displaced their eye or ear protection during a course of fire, or has commenced a course of fire without them, the Range Officer must immediately stop the competitor who will be required to reshoot the course of fire after the protective devices have been restored.",
+                "5.5.4": "5.5.4 Metal piercing, incendiary and/or tracer ammunition is prohibited at IPSC matches (see Rule 10.5.16).",
+                "5.5.5": "5.5.5 Ammunition which discharges more than one bullet or other scoring projectile from a single round is prohibited (see Rule 10.5.16).",
+                "5.5.6": "5.5.6 Ammunition deemed unsafe by a Range Officer must be immediately withdrawn from the match (see Rule 10.5.16).",
+                "5.7.5": "5.7.5 Where the firearm has failed as above, the competitor must not be permitted to reshoot the course of fire. This includes instances where a firearm is declared unserviceable or unsafe during a course of fire (see Rule 5.1.6).",
+                "5.7.6.2": "5.7.6.2 If the Range Officer discovers that the suspected safety problem does not exist, the competitor will be required to reshoot the stage.",
+                "5.7.6.3": "5.7.6.3 A competitor who self-stops due to a suspected or actual squib load is not entitled to a reshoot.",
+                "5.8.1.2": "5.8.1.2 Official match ammunition purchased by competitors is deemed to be competitor equipment (see Section 5.7), therefore malfunctions will not be grounds for a reshoot and/or an appeal to Arbitration.",
+                "6.2.3": "6.2.3 Prior to the commencement of a match, each competitor must declare one Division for score, and Match Officials should check competitor equipment compliance with the declared Division, prior to the competitor making an attempt at any of the courses of fire. This is a service to assist competitors verify that their equipment, in the configuration as presented, is in compliance with their declared Division. However, competitors always remain subject to the provisions of Rule 6.2.5.1.",
+                "6.2.5.1": "6.2.5.1 A competitor who fails to satisfy the maximum distance of handgun and allied equipment from his belt (see Appendices D1-6), or the foremost limit for handgun, holster and allied equipment (see Appendix E2), requirements of a declared Division after the Start Signal will incur a warning for the first offense. Subsequent occurrences in the same match will result in the competitor being placed in Open Division, if available, otherwise the competitor's scores will not be entered into match results. Competitors already registered in Open Division who fail to comply with the above requirements after the Start Signal will incur a warning for the first offense, but will not have their scores entered into match results for subsequent occurrences in the same match. A competitor who fails to satisfy the equipment or other requirements, with the exception of those listed above, of a declared Division after the Start Signal, will be placed in Open Division, if available, otherwise the competitor's scores will not be entered into match results. Competitors already registered in Open Division who fail to comply with the requirements, with the exception of those listed above, of Open Division after the Start Signal will not have their scores entered into match results. This rule does not apply for measurements done under Rule 5.2.5, either before (see Rule 6.2.3) or after the competitor has shot the stage.",
+                "8.1.1.2": "8.1.1.2 Double/Selective Action: hammer fully down and cylinder closed. If self-loading pistols prepare \"magazine well and chamber empty\", revolvers prepare with an empty cylinder, otherwise revolvers prepare with a fully loaded cylinder.",
+                "8.1.2.5": "8.1.2.5 If a handgun has a decocking lever, that alone must be used to decock the handgun, without touching the trigger. If a handgun does not have a decocking lever, the hammer must be safely and manually lowered all the way forward (i.e. not just to a \"half-cock notch\" or to another similar intermediary position).",
+                "8.3.1": "8.3.1 \"Load And Make Ready\" (or \"Make Ready\" for starts with an unloaded firearm) – This command signifies the start of \"the Course of Fire\". Under the direct supervision of the Range Officer the competitor must face downrange, or in a safe direction as specified by the Range Officer, fit eye and ear protection, and prepare the firearm in accordance with the written stage briefing. The competitor must then assume the required start position. At this point, the Range Officer will proceed.",
+                "8.3.1.1": "8.3.1.1 Once the appropriate command has been given, the competitor must not move away from the start location prior to issuance of the Start Signal without the prior approval, and under the direct supervision, of the Range Officer. Violation will result in a warning for the first offense and may result in the application of Rule 10.6.1 for a subsequent offense in the same match.",
+                "8.3.7": "8.3.7 \"If Clear, Hammer Down, Holster\" – After issuance of this command, the competitor must not resume shooting (see Rule 10.6.1). While continuing to point the handgun safely downrange, the competitor must perform a final safety check of the handgun as follows:\n\n8.3.7.1 Self-loaders – Release the slide and pull the trigger (without touching the hammer or decocker, if any). If a handgun has a device which requires a magazine be inserted to enable the trigger to be pulled, the competitor must, on issuance of the above command, inform the Range Officer, who will direct and supervise the use, and subsequent removal, of an empty magazine to facilitate this process.\n\n8.3.7.2 Revolvers – Close the empty cylinder (without touching the hammer, if any).\n\n8.3.7.3 If the gun proves to be clear, the competitor must holster his handgun. Once the competitor's hands are clear of the holstered handgun, the course of fire is deemed to have ended.\n\n8.3.7.4 If the gun does not prove to be clear, the Range Officer will resume the commands from Rule 8.3.6 (also see Rule 10.4.3).",
+                "8.5.1": "8.5.1 Except when the competitor is actually aiming or shooting at targets, all movement must be accomplished with the fingers visibly outside the trigger guard and the external safety should be applied. The firearm must be pointed in a safe direction. \"Movement\" is defined as any of the actions below:\n\n8.5.1.1 Taking more than one step in any direction.\n\n8.5.1.2 Changing shooting position (e.g. from standing to kneeling, from seated to standing etc.).",
+                "8.6.1": "8.6.1 No assistance of any kind can be given to a competitor during a course of fire, except that any Range Officer assigned to a stage may issue safety warnings to a competitor at any time. Such warnings will not be grounds for the competitor to be awarded a reshoot.",
+                "8.6.2": "8.6.2 Any person providing assistance to a competitor during a course of fire without the prior approval of a Range Officer (and the competitor receiving such assistance) may, at the discretion of a Range Officer, incur a procedural penalty for that stage and/or be subject to Section 10.6.",
+                "8.6.3": "8.6.3 Any person verbally or otherwise interfering with a competitor during his attempt at a course of fire may be subject to Section 10.6. If the Range Officer believes that the interference significantly affected the competitor, he must report the incident to the Range Master, who may, at his discretion, offer the affected competitor a reshoot.",
+                "8.6.4": "8.6.4 In the event that inadvertent contact with the Range Officer, or another external influence, has interfered with the competitor during a course of fire, the Range Officer may offer the competitor a reshoot of the course of fire. The competitor must accept or decline the offer prior to seeing either the time or the score from the initial attempt. However, if the competitor commits a safety infraction during any such interference, the provisions of Sections 10.4 and 10.5 may still apply.",
+                "8.6.5": "8.6.5 In the event that any person appears downrange from the competitor during a course of fire, it must immediately be terminated and the competitor required to reshoot the course of fire. If the competitor notices the problem before the Range Officer, he must immediately self-stop, cease firing, point his firearm in a safe direction and wait for further instructions from the Range Officer. However, if the competitor fails to comply with the above procedure, the provisions of Sections 10.4 and 10.5 will apply.",
+                "8.7.1": "8.7.1 Competitors are prohibited from taking a sight picture and/or dry firing prior to the Start Signal. Violation will result in a warning for the first occurrence and one procedural penalty for each subsequent occurrence in the same match. Competitors may, while pointing their firearm directly at the ground in front of them, adjust electronic sights.",
+                "8.7.2": "8.7.2 Competitors are prohibited from using any sighting aid (e.g. the whole or part of an imitation or replica firearm, any part of a real firearm including any accessories thereof etc.), except for their own hands, while conducting their inspection (\"walkthrough\") of a course of fire. Violations will incur one procedural penalty per occurrence (also see Rule 10.5.1).",
+                "8.7.3": "8.7.3 No person is permitted to enter or move through a course of fire without the prior approval of a Range Officer assigned to that course of fire, or the Range Master. Violations will incur a warning for the first offense but may be subject to the provisions of Section 10.6 for subsequent offenses.",
+                "9.1.1": "9.1.1 Approaching Targets – While scoring is in progress, competitors or their delegate must not approach any target closer than 1 meter without the authorization of the Range Officer. Violation will result in a warning for the first offense, but the competitor or his delegate may, at the discretion of the Range Officer, incur a procedural penalty for subsequent occurrences in the same match.",
+                "9.1.2": "9.1.2 Touching Targets – While scoring is in progress competitors or their delegate must not touch, gauge or otherwise interfere with any target without the authorization of the Range Officer. Should a Range Officer deem that a competitor or their delegate has influenced or affected the scoring process due to such interference, the Range Officer may:\n\n9.1.2.1 Score the affected target as a missed target; or\n\n9.1.2.2 Impose penalties for any affected no-shoots.",
+                "9.1.3": "9.1.3 Prematurely Patched Targets – If a target is prematurely patched or taped, preventing the determination of the actual score, the Range Officer must order the competitor to reshoot the course of fire.",
+                "9.1.4": "9.1.4 Unrestored Targets – If, following completion of a course of fire by a previous competitor, one or more targets have not been properly patched or taped for the competitor being scored, the Range Officer must judge whether or not an accurate score can be determined. If there are extra scoring hits or questionable penalty hits thereon, and it is not obvious which hits were made by the competitor being scored, the affected competitor must be ordered to reshoot the course of fire.",
+                "9.1.4.1": "9.1.4.1 In the event that patches or tape applied to a restored paper target are accidentally blown off by wind, muzzle blast or another reason, and it is not obvious to the Range Officer which hits were made by the competitor being scored, the competitor will be required to reshoot the course of fire.",
+                "9.1.4.2": "9.1.4.2 A competitor who hesitates or self-stops during his attempt at a course of fire, due to a belief that one or more targets have not been restored or reset, is not entitled to a reshoot.",
+                "9.1.5.1": "9.1.5.1 Bullet strikes wholly within the scoring area of a paper target, and continues on to strike the scoring area of another paper target, the hit on the subsequent paper target will not count for score or penalty, as the case may be.",
+                "9.1.5.2": "9.1.5.2 Bullet strikes wholly within the scoring area of a paper target, and continues on to hit or strike down a metal target, this will be treated as range equipment failure. The competitor will be required to reshoot the course of fire, after it has been restored.",
+                "9.1.5.3": "9.1.5.3 Bullet strikes partially within the scoring area of a paper or metal target, and continues on to strike the scoring area of another paper target, the hit on the subsequent paper target will also count for score or penalty, as the case may be.",
+                "9.1.5.4": "9.1.5.4 Bullet strikes partially within the scoring area of a paper or metal target, and continues on to strike down (or hit the scoring area of) another metal target, the fallen (or hit on the) subsequent metal target will also count for score or penalty, as the case may be.",
+                "9.1.6.1": "9.1.6.1 Bullet strikes wholly within hard cover, and continues on to strike the scoring area of a scoring paper target or no-shoot, the hit on the paper target or no-shoot will not count for score or penalty, as the case may be. If it cannot be determined which hit(s) on the scoring area of a scoring paper target or no-shoot are the result of shots fired through hard cover, the scoring paper target or noshoot will be scored by ignoring the applicable number of highest scoring hit(s).",
+                "9.1.6.2": "9.1.6.2 Bullet strikes wholly within hard cover, and continues on to hit or strike down a metal target, this will be treated as range equipment failure (see Rule 4.7.1). The competitor will be required to reshoot the course of fire, after it has been restored.",
+                "9.1.6.3": "9.1.6.3 Bullet strikes partially within hard cover, and continues on to strike the scoring area of a paper target, the hit on that paper target will count for score or penalty, as the case may be.",
+                "9.1.6.4": "9.1.6.4 Bullet strikes partially within hard cover, and continues on to strike down a scoring metal target, the fallen target will count for score. If a bullet strikes partially within hard cover, and continues on to strike down or hit a metal no-shoot, the fallen no-shoot or hit thereon will count for penalty.",
+                "9.1.7": "9.1.7 Target Sticks – Are neither Hard Cover nor Soft Cover. Shots which have passed wholly or partially through target sticks and which hit a paper or metal target will count for score or penalty, as the case may be.",
+                "9.4.2": "9.4.2 Each hit visible on the scoring area of a paper no-shoot will be penalized minus 10 points, up to a maximum of 2 hits per no-shoot.",
+                "9.7.4": "9.7.4 A score sheet signed by both a competitor and a Range Officer is conclusive evidence that the course of fire has been completed, and that the time, scores and penalties recorded on the score sheet, are accurate and uncontested. The signed score sheet is deemed to be a definitive document and, with the exception of the mutual consent of the competitor and the signatory Range Officer, or due to an arbitration decision, the score sheet will only be changed to correct arithmetical errors or to add procedural penalties under Rule 8.6.2.",
+                "9.7.6": "9.7.6 In the event that a reshoot is not possible for any reason, the following actions will prevail:\n\n9.7.6.1 If the time is missing, the competitor will receive a zero score for the stage.\n\n9.7.6.2 If insufficient hits or misses have been recorded on the score sheet, those which have been recorded will be deemed complete and conclusive.\n\n9.7.6.3 If excessive hits or misses have been recorded on the score sheet, the highest value scoring hits recorded will be used.\n\n9.7.6.4 Procedural penalties recorded on the score sheet will be deemed complete and conclusive, except where Rule 8.6.2 applies.\n\n9.7.6.5 If the identity of the competitor is missing from a score sheet, it must be referred to the Range Master, who must take whatever action he deems necessary to rectify the situation.",
+                "9.7.8": "9.7.8 No person, other than an authorized Match Official, is permitted to handle an original score sheet retained on a stage, or at any other place, after it has been signed by a competitor and a Range Officer, without the prior approval of the Range Officer or personnel directly involved with Stats. Violations will incur a warning for the first offense, but may be subject to Section 10.6 for subsequent occurrences in the same match.",
+                "9.9.2": "9.9.2 Moving targets which do not comply with the above criteria are disappearing and will not incur failure to engage or miss penalties unless a competitor fails to activate the mechanism which initiates the target movement before or when firing his last shot for that course of fire.",
+                "9.10.2": "9.10.2 If, in the opinion of an Arbitration Committee, the time credited to a competitor for a course of fire is deemed to be unrealistic, the competitor will be required to reshoot the course of fire (see Rule 9.7.4).",
+                "10.1.1": "10.1.1 Procedural penalties are imposed when a competitor fails to comply with procedures specified in a written stage briefing and/or is found to be in violation of other general rules. The Range Officer imposing the procedural penalties must clearly record the number of penalties, and the reason why they were imposed, on the competitor's score sheet.",
+                "10.1.2": "10.1.2 Procedural penalties are assessed at minus 10 points each.",
+                "10.1.3": "10.1.3 A competitor disputing the application or number of procedural penalties may appeal to the Chief Range Officer and/or Range Master. A competitor who continues to be aggrieved may then lodge an appeal for arbitration.",
+                "10.1.4": "10.1.4 Procedural penalties cannot be nullified by further competitor action. For example, a competitor who fires a shot at a target while faulting a line will still incur the applicable penalties even though he subsequently shoots at the same target while not faulting the line.",
+                "10.2.1": "10.2.1 A competitor who fires shots while any part of their body is touching the ground or any object beyond a Fault Line will receive 1 procedural penalty for each occurrence. No penalty is assessed if a competitor does not fire any shots while faulting except when Rule 2.2.1.5 applies.\n\n10.2.1.1 However, if the competitor has gained a significant advantage on any target(s) while faulting, he may instead be assessed 1 procedural penalty for each shot fired at the subject target(s) while faulting.",
+                "10.2.2": "10.2.2 A competitor who fails to comply with a procedure specified in the written stage briefing will incur 1 procedural penalty for each occurrence. However, if a competitor has gained a significant advantage during non-compliance, the competitor may be assessed 1 procedural penalty for each shot fired, instead of a single penalty (e.g. firing one or more shots contrary to the required location, shooting position or stance).",
+                "10.2.3": "10.2.3 Where multiple penalties are assessed in the above cases, they must not exceed the maximum number of scoring hits that can be attained by the competitor. For example, a competitor who gains an advantage while faulting a Fault Line where only 4 metal targets are visible will receive 1 procedural penalty for each shot fired while faulting, up to a maximum of 4 procedural penalties, regardless of the number of shots actually fired.",
+                "10.2.4": "10.2.4 A competitor who fails to comply with a mandatory reload will incur 1 procedural penalty for each shot fired after the point where the reload was required until a reload is performed.",
+                "10.2.5": "10.2.5 In a Cooper Tunnel, a competitor who disturbs one or more pieces of the overhead material will receive 1 procedural penalty for each piece of overhead material which falls. Overhead material which falls as a result of the competitor bumping or striking the uprights, or as a result of muzzle gases or recoil, will not be penalized.",
+                "10.2.6": "10.2.6 A competitor who is creeping (e.g. moving hands towards the firearm, a reloading device or ammunition) or physically moving to a more advantageous shooting position or stance after the \"Standby\" command and prior to issuance of the Start Signal, will incur 1 procedural penalty. If the Range Officer can stop the competitor in time, a warning will be issued for the first offense and the competitor will be restarted.",
+                "10.2.7": "10.2.7 A competitor who fails to engage any scoring target with at least one round will incur 1 procedural penalty per target, plus the applicable number of misses, except where the provisions of Rule 9.9.2 apply.",
+                "10.2.8": "10.2.8 If a course of fire (or part thereof) stipulates shooting strong or weak hand only, a competitor will incur one procedural penalty for each occurrence of touching the handgun (or scooping it from a table etc.) with the other hand after the Start Signal (or from the point where single hand shooting has been stipulated). Exceptions are releasing an external safety (without scooping), reloading or correcting a malfunction. However, the procedural penalty will be applied on a \"per shot fired\" basis when a competitor uses the other hand or arm to:\n\n10.2.8.1 support the handgun or the stipulated wrist, hand or arm while firing shots;\n\n10.2.8.2 increase stability on the ground, a barricade or another prop while firing shots.",
+                "10.2.9": "10.2.9 A competitor who leaves a shooting location may return and shoot again from the same location provided they do so safely. However, written stage briefings for Classifiers and Level I & II matches may prohibit such actions, in which case 1 procedural penalty per shot fired will apply.",
+                "10.2.10": "10.2.10 Special penalty: A competitor unable to fully execute any part of a course of fire due to incapacity or injury may, prior to making his attempt at the course of fire, request that the Range Master apply a penalty in lieu of the stated course requirement.\n\n10.2.10.1 If the request is approved by the Range Master, he must state, in advance of the competitor attempting the course of fire, the extent of the special penalty, ranging from 1% to 20% of the competitor's points \"as shot\", to be deducted.\n\n10.2.10.2 Alternatively, the Range Master may waive application of any penalties in respect of a competitor who, due to having a significant physical disability, is unable to comply with the stated course requirement.\n\n10.2.10.3 If the request is denied by the Range Master, normal procedural penalties will apply.",
+                "10.2.11": "10.2.11 A competitor who fires shots over a barrier constructed to a height of at least 1.8 meters will incur 1 procedural penalty for each shot fired (also see Rule 2.2.3.1).",
+                "10.3.1": "10.3.1 A competitor who commits a safety infraction or any other prohibited activity during an IPSC match will be disqualified, and will be prohibited from attempting any remaining courses of fire regardless of the schedule or physical layout of the match, pending the verdict of any appeal submitted in accordance with Chapter 11 of these rules.",
+                "10.4.1": "10.4.1 A shot, which travels over a backstop, a berm or in any other direction, specified in the written stage briefing by the match organizers as being unsafe. Note that a competitor who legitimately fires a shot at a target, which then travels in an unsafe direction, will not be disqualified, but the provisions of Section 2.3 may apply.",
+                "10.4.2": "10.4.2 A shot which strikes the ground within 3 meters of the competitor, except when shooting at a paper target closer than 3 meters to the competitor. A shot which strikes the ground within 3 meters of the competitor due to a \"squib\" load is exempt from this rule.",
+                "10.4.3": "10.4.3 A shot which occurs while actually loading, reloading or unloading a firearm. This includes any shot fired during the procedures outlined in Rules 8.3.1 and 8.3.7 (also see Rule 10.5.10).\n\n10.4.3.1 Exception – a detonation, which occurs while unloading a firearm, is not considered a shot or discharge subject to a disqualification. However, Rule 5.1.6 may apply.",
+                "10.4.4": "10.4.4 A shot which occurs during remedial action in the case of a malfunction.",
+                "10.4.5": "10.4.5 A shot which occurs while transferring a handgun between hands.",
+                "10.4.6": "10.4.6 A shot which occurs during movement, except while actually shooting at targets.",
+                "10.4.7": "10.4.7 A shot fired at a metal target from a distance of less than 7 meters, measured from the front of the target to the nearest part of the competitor's body in contact with the ground (see Rule 2.1.3).",
+                "10.4.8": "10.4.8 In this Section, if it can be established that the cause of the discharge is due to a broken or defective part of the firearm, the competitor has not committed any safety infraction in this Section, and a disqualification will not be invoked, but the competitor's scores for that stage will be zero.\n\n10.4.8.1 The firearm must be immediately presented for inspection to the Range Master or his delegate, who will inspect the firearm and carry out any tests necessary to establish that a broken or defective part caused the discharge. A competitor may not later appeal a disqualification for an accidental discharge due to a broken or defective part if they fail to present the firearm for inspection prior to leaving the course of fire.",
+                "10.5.1": "10.5.1 Handling a firearm at any time except when in a designated Safety Area or when under the supervision of, and in response to a direct command issued by, a Range Officer (limited exception: see Rule 5.2.2).",
+                "10.5.2": "10.5.2 Allowing the muzzle of a firearm to point uprange, or past the default, or specific safe angles of fire during a course of fire, (limited exceptions: see Rules 2.1.2.1, 5.2.7.3 and 10.5.7).",
+                "10.5.3": "10.5.3 If at any time during the course of fire, a competitor drops his firearm or causes it to fall, loaded or not. Note that a competitor who, for any reason during a course of fire, safely and intentionally places the firearm on the ground or other stable object will not be disqualified provided:\n\n10.5.3.1 The competitor maintains constant physical contact with the firearm, until it is placed firmly and securely on the ground or another stable object; and\n\n10.5.3.2 The competitor remains within 1 meter of the firearm at all times (except where the firearm is placed at a greater distance, under the supervision of a Range Officer, in order to comply with a start position); and\n\n10.5.3.3 The provisions of Rule 10.5.2 do not occur; and\n\n10.5.3.4 The firearm is in the ready condition as specified in Section 8.1; or\n\n10.5.3.5 The firearm is unloaded and the action is open.",
+                "10.5.4": "10.5.4 Drawing or holstering a handgun within the confines of a tunnel.",
+                "10.5.5": "10.5.5 Allowing the muzzle of a handgun to point at any part of the competitor's body during a course of fire (i.e. sweeping). A disqualification is not applicable if sweeping occurs while drawing or re-holstering a gun, provided the competitor's fingers are clearly outside the trigger guard.",
+                "10.5.6": "10.5.6 Allowing the muzzle of a firearm to point at any part of another person's body (e.g. Match Official or spectator) during a course of fire. A disqualification is not applicable if the problem is due to another person appearing downrange from the competitor during a course of fire, provided that the competitor complies with the provisions of Rule 8.6.5.",
+                "10.5.7": "10.5.7 Allowing the muzzle of a loaded handgun to point rearwards uprange beyond a radius of 1 meter from a competitor's feet during drawing or re-holstering. The 1 meter concession only applies when a competitor is facing directly downrange.",
+                "10.5.8": "10.5.8 Wearing or using more than one firearm during a course of fire.",
+                "10.5.9": "10.5.9 Failure to keep the finger outside the trigger guard while clearing a malfunction where the competitor clearly moves the firearm away from aiming at targets.",
+                "10.5.10": "10.5.10 Failure to keep the finger outside the trigger guard during loading, reloading, or unloading except where specifically permitted (see Rules 8.1.2.5, 8.3.7.1 and 8.7.1).",
+                "10.5.11": "10.5.11 Failure to keep the finger outside the trigger guard during movement in accordance with Rule 8.5.1.",
+                "10.5.12": "10.5.12 Having a loaded and holstered handgun, in any of the following conditions:\n\n10.5.12.1 A single action self-loading pistol with the chamber loaded and the safety not applied.\n\n10.5.12.2 A double action or selective action pistol with the hammer cocked and the safety not applied.\n\n10.5.12.3 A revolver with the hammer cocked.",
+                "10.5.13": "10.5.13 Handling live or dummy ammunition in a Safety Area, contrary to Rule 2.4.4.\n\n10.5.13.1 The word \"handling\" does not preclude competitors from entering a Safety Area with ammunition in magazines or speed loaders on their belt, in their pockets or in their range bag, provided the competitor does not physically remove the loaded magazines or loaded speed loaders from their retaining or storage device while within the Safety Area.",
+                "10.5.14": "10.5.14 Having a loaded firearm other than when specifically authorized by a Range Officer.",
+                "10.5.15": "10.5.15 Retrieving a dropped firearm. Dropped firearms must always be retrieved by a Range Officer who will, after checking and/or clearing the firearm, place it directly into the competitor's gun case, gun bag or holster. Dropping an unloaded firearm or causing it to fall outside of a course of fire is not an infraction. However, a competitor who retrieves a dropped firearm will receive a disqualification.",
+                "10.5.16": "10.5.16 Using prohibited and/or unsafe ammunition (see Rules 5.5.4, 5.5.5 and 5.5.6), and/or using a prohibited firearm (see Rules 5.1.10 and 5.1.11).",
+                "10.6.1": "10.6.1 Competitors will be disqualified for conduct which a Range Officer deems to be unsportsmanlike. Examples include, but are not limited to, cheating, dishonesty, failing to comply with the reasonable directions of a Match Official, or any behavior likely to bring the sport into disrepute. The Range Master must be notified as soon as possible.",
+                "10.6.2": "10.6.2 A competitor who is deemed by a Range Officer to have intentionally removed or caused the loss of eye or ear protection in order to gain a reshoot or advantage will be disqualified.",
+                "10.7.3": "10.7.3 Except when used for medicinal purposes, competitors and officials at matches must not be affected by drugs (including alcohol) of any sort during matches. Any person, who in the opinion of the Range Master is visibly under the influence of any of the items described herein, will be disqualified from the match and may be required to leave the range."
+                },
+                ui: {
+                    pageTitle: "IPSC Handgun Competition Rules",
+                    pageHeader: "📋 IPSC Handgun Competition Rules",
+                    searchPlaceholder: "Search rules...",
+                    filterAll: "All",
+                    filterWarn: "⚠️ Warn",
+                    filterProc: "📋 Proc",
+                    filterDQ: "⛔ DQ",
+                    filterReshoot: "🔄 Reshoot",
+                    filterScoring: "🎯 Scoring",
+                    statsRules: "Rules",
+                    noResults: "No rules found matching your search.",
+                    docSource: "IPSC Handgun Competition Rules - January 2026 Edition (Final 29 Dec 2025)",
+                    lastUpdated: "Last Updated: May 7, 2026",
+                    clickTip: "💡 Click on any rule number to view the full text from the official rulebook",
+
+                    // Section titles
+                    sectionTitleWarnings: "Warnings",
+                    sectionTitleProcedures: "Procedures",
+                    sectionTitleDisqualifications: "Disqualifications",
+                    sectionTitleReshoots: "Reshoots",
+                    sectionTitleScoring: "Scoring",
+
+                    // Section descriptions
+                    sectionDescWarnings: "Violations that result in warnings, with escalating penalties for repeat offenses.",
+                    sectionDescProcedures: "Procedural requirements with specific point deductions (-10 points per procedural penalty).",
+                    sectionDescDisqualifications: "Violations that result in immediate disqualification from the match.",
+                    sectionDescReshoots: "Rules for when reshoots are granted or denied.",
+                    sectionDescScoring: "Rules for target scoring.",
+
+                    // Table headers
+                    tableHeaderRule: "Rule",
+                    tableHeaderCondition: "Condition",
+                    tableHeaderAction: "Action",
+
+                    // Fallback message
+                    ruleNotAvailable: "Full text not available"
+                }
+            },
+            bg: {
+                fullRuleText: {
+                "2.1.2.1": "По нареждане или съгласие на регионалния директор, могат да бъдат разрешени специфични допустими ъгли на стрелба (по-големи или по-малки). Нарушенията са обект на Правило 10.5.2. Пълните подробности за допустимите ъгли на стрелба и условия (напр.: намален вертикален ъгъл на цевта, ако пръста на състезателя е в пределите на спусковата скоба; вертикалният ъгъл на безопасност може да бъде ограничен до горните ръбове на защитните валове и др.), трябва да бъдат публикувани преди състезанието и трябва да са включени в писмения брифинг на сцената (виж също раздел 2.3).",
+                "2.1.3": "Винаги, когато в курса на стрелба се използват метални мишени или метални твърди покрития, трябва да се вземат предпазни мерки състезателите и длъжностните лица да запазят минимална дистанция от 7 метра до тях, докато състезателят ги обстрелва. Където е възможно, това би трябвало да се направи с физически прегради. Ако се използват наказателни линии за ограничаване приближаването към метални мишени, те трябва да бъдат поставени на минимум 8 метра от мишените, така че дори когато състезателят неумишлено престъпи линията да остане извън минималната 7 метрова дистанция (виж Правило 10.4.7). Трябва да се обърне внимание и по отношение на металните реквизити по линията на стрелба.",
+                "2.2.1.5": "Ако по време на курса на стрелба бъдат преминати видимите наказателни линии и/или ясно обозначеното за движение трасе, състезателя, който е преминал отвъд огражденията, ще получи по едно процедурно наказание за всеки произведен изстрел след излизане от ограничената зона.",
+                "2.2.3.1": "Трябва да са достатъчно високи и здрави да служат за предвидената цел. Ако не са допълнение към платформа за стрелба, параваните високи поне 1,8 метра се смятат за високи до безкрай (виж Правило 10.2.11)",
+                "2.3.3.3": "Състезател, който откаже да повтори даден курс на стрелба по нареждане на длъжностно лице в съответствие с разпоредбите на този или който и да е друг раздел, получава нулев резултат за тази сцена, без оглед на предишни опити.",
+                "2.3.4.1": "Състезател, който бъде дисквалифициран на сцена, която в последствие отпадне от състезанието има право да продължи участие, ако Главния Съдия или Арбитражната комисия или техен упълномощен представител реши, че основанието за дисквалификация е обяснимо/аргументирано с причините довели до отпадане на сцената.",
+                "2.4.4": "При никакви обстоятелства не трябва да се борави с бутафорна или истинска муниция, в насипно състояние, опакована или лентована в пълнители или зареждачки (виж Правило 10.5.12).",
+                "4.7.1": "Оборудването на сцената трябва да представя курса на стрелба еднакво и безпристрастно на всички състезатели. Повреда в оборудването на сцената включва, но не се ограничава до: изместване на хартиени мишени, предварително активиране на метална или движеща се мишена, неизправност на механично или електронно оборудване и повреда в реквизита като врати, отвори и прегради.",
+                "4.7.2": "Състезател, който не е в състояние да завърши курса на стрелба поради повреда в оборудването на сцената или поради не вдигната метална или незаредена движеща се мишена преди началото на стрелбата, трябва да повтори курса на стрелба след като се предприемат корективни действия.",
+                "4.7.2.1": "Невъзстановена хартиена мишена не е повреда в оборудването на сцената (виж Правило 9.1.4)",
+                "4.7.2.2": "Ако Главния Съдия прецени, че една или повече мишени в курса на стрелба са проблематични и/или са били поставени по начин, доста различен от положението им по-рано, той може да предложи повторно минаване на курса на стрелба на засегнатите състезатели.",
+                "5.1.6": "Оръжията трябва да бъдат изправни и безопасни. Съдиите имат право по всяко време да извършват проверка на оръжието или екипировката на състезателя. Ако нещо се окаже неизправно или небезопасно, то трябва да бъде оттеглено от състезанието, докато не бъде поправено или приведено в състояние, задоволяващо Главния Съдия (виж и Правило 5.7.5).",
+                "5.1.10": "Пистолети с приклади и/или предни ръкохватки от всякакъв вид са забранени (виж Правило 10.5.16).",
+                "5.1.11": "Пистолети и гладкоцевни оръжия позволяващи стрелба на откоси или напълно автоматична стрелба (т.е. когато с едно натискане на спусъка могат да се произведат повече от един изстрел) са забранени (виж Правило 10.5.16).",
+                "5.2.1.2": "Пистолет носен в кобур, трябва да е без пълнител и със спуснато чукче или декокнат. Неспазването на това води до предупреждение за първо нарушение, но всяко следващо нарушение по време на същото състезание ще бъде обект на разпоредбите на Правило 10.6.1.",
+                "5.2.2": "Манипулация – с изключение на моментите, когато е в границите на безопасната зона или когато е под контрола и директните команди на Съдия, състезателите не трябва да боравят със своите оръжия. Думата \"боравене\" включва прибиране и вадене от кобур на оръжие, дори ако това се извършва скрито под защитно покритие и/или слагането или махането от колана на състезателя, дори оръжието да е изцяло или частично прибрано в кобур. Нарушенията са обект на Правило 10.5.1. Изключение: състезател, който е под наблюдението на съдия и погрешка извади от кобура своето огнестрелно оръжие, докато чака командата \"Заредете и пригответе\" или \"Пригответе се\" ще (при условие, че не е извършено друго нарушение на безопасността или забранена дейност) носи предупреждение за първия такъв случай, но ще бъде предмет на Правило 10.5.1 за последващи събития в същия мач.",
+                "5.2.5": "Когато дадена дивизия изисква максимална дистанция, на която пистолетът и оборудването могат да бъдат от тялото на състезателя, съдията може да провери това измервайки най-близкото разстояние между тялото на състезателя и средата на края на ръкохватката на пистолета и/или пълнителите или зареждачките.\n\nИзмерването трябва да се направи докато състезателят стои в отпуснато положение (виж приложение Е2).\n\nВсеки състезател, който не премине горепосочения тест, преди стартовия сигнал ще бъде задължен да нагласи кобура и оборудването си така, че да отговаря на изискванията на съответната дивизия. Главният Съдия може да прояви снизхождение при отклонения от тези изисквания, по анатомични съображения. Някои състезатели може да не са в състояние напълно да ги удовлетворят.",
+                "5.2.7.3": "Кобур, който позволява цевта на прибрания в него пистолет да сочи на разстояние по голямо от 1 метър от ходилата на състезателя при изправено положение;",
+                "5.4.3": "Ако съдията забележи, че състезател е изгубил или са му се разместили предпазните средства за зрението или слуха по време на курса на стрелба или че е започнал курса на стрелба без тях, той трябва незабавно да спре състезателя и да нареди повторение на курса на стрелба, след като предпазните средства бъдат поставени правилно.",
+                "5.5.4": "Бронебойни, запалителни и/или трасиращи боеприпаси са забранени в състезанията по правилата на IPSC (виж Правило 10.5.16).",
+                "5.5.5": "Боеприпас, който при един изстрел изстрелва повече от един куршум или проектил е забранен (виж Правило 10.5.16).",
+                "5.5.6": "Боеприпас, който по преценка на съдията е небезопасен, трябва незабавно да се изтегли от състезанието (виж Правило 10.5.16).",
+                "5.7.5": "Когато оръжието се повреди като гореописаното, състезателят няма право да повтори съответния курс на срелба. Това включва случаи, когато оръжието на състезателя е обявено за неизправно или небезопасно по време на курса на стрелба (виж Правило 5.1.6).",
+                "5.7.6.2": "Ако съдията открие, че подозирания проблем не съществува, състезателят ще трябва да повтори курса на стрелба.",
+                "5.7.6.3": "Състезател, който сам прекрати стрелбата по подозрение за или при фактически \"капсен заряд\" няма право на повторение на курса на стрелба.",
+                "5.8.1.2": "Официалният боеприпас на състезанието, закупен от състезателя се счита за негова екипировка (виж раздел 5.7), следователно всякакви неизправности от страна на боеприпаса не са основание за повторение на курса на стрелба и/или за подаване на жалби до арбитражната комисия.",
+                "6.2.3": "Преди началото на състезанието всеки състезател декларира дивизията в която ще се състезава и длъжностните лица би трябвало да проверят съответствието на екипировката му с декларираната дивизия, преди състезателят да е започнал преминаването на който и да било курс на стрелба. Това е услуга за подпомагане на състезателите да удостоверят, че тяхното оборудване, в конфигурацията, в която е представено, е в съответствие с декларираната от тях дивизия. Все пак състезателите винаги си остават обект на разпоредбите на Правило 6.2.5.1.",
+                "6.2.5.1": "Състезател на когото оръжието и съпътстващата екипировка е разположена на по голяма дистанция от тялото от максимално разрешената (виж Приложения D1-D5) или престъпва границите на ограничителните линии (виж Приложение Е2) в нарушение на изискванията на заявената Дивизия след стартовия сигнал, ще получи предупреждение за първия случай. Последващо нарушение в същия мач ще доведе до преместване на състезателя в Дивизия OPEN, ако има такава, в противен случай резултатите му няма да бъдат включени в класирането. Ако състезателят е вече регистриран в Дивизия OPEN и след стартовия сигнал се открият несъответствия в упоменатите изисквания, ще получи предупреждение за първия случай, но в случай на повторно нарушение в същия мач, резултатите му няма да бъдат включени в класирането. Ако след стартовия сигнал се открият несъответствия с други изисквания на заявената Дивизия (освен упоменатите по горе), следва преместване на състезателя в Дивизия OPEN, ако има такава, в противен случай резултатите му няма да бъдат включени в класирането. Ако състезателят е вече регистриран в Дивизия OPEN и след стартовия сигнал се открият несъответствия с други изисквания на Дивизия OPEN (освен упоменатите по горе), резултатите му няма да бъдат включени в класирането. Това правило не се прилага за измервания направени в съответствие с Правило 5.2.5, нито преди (виж Правило 6.2.3), нито след като състезателят е отстрелял сцената.",
+                "8.1.1.2": "С двойно/избирателно действие: чукчето напълно спуснато и затворен цилиндър. Ако самозарядни пистолети се подготвят \"без пълнител и патрон в цевта\", то револверите се подготвят с празен барабан, в противен случай те се подготвят с напълно зареден цилиндър.",
+                "8.1.2.5": "Ако пистолета има декокер, единствено той трябва да се ползва за декокване на чукчето, без да се докосва спусъка. Ако пистолета е без декокер, чукчето трябва да се спусне ръчно, по безопасен начин, до крайно предно положение (т.е. не на полувзвод или друго подобно междинно положение).",
+                "8.3.1": "\"Load And Make Ready\"/ Зареди и се подготви /(или \"Make Ready\"/Подготви се/ при стартова позиция с незаредено оръжие) – Тази команда обозначава началото на курса на стрелба. Под непосредствения надзор на Съдията на сцената, състезателят трябва да застане с лице към сцената или в безопасна посока, определена от Съдията, да постави предпазните си средства за защита на слуха и зрението и да подготви оръжието си според указанията на писмения брифинг. След това трябва да заеме изискваната стартова позиция. В този момент Съдията продължава с командите.",
+                "8.3.1.1": "След издаването на съответната командата, състезателят няма право да напуска стартовата позиция до стартовия сигнал, без изричното разрешение и непосредствения надзор на Съдията на сцената. Нарушението на това правило води до предупреждение при първо провинение и може да доведе до приложението на Правило 10.6.1 при повторно нарушение в рамките на състезанието.",
+                "8.3.7": "\"If Clear, Hammer Down, Holster\"/Ако е празно, пусни чукчето, прибери в кобура/ - След издаването на тази команда, състезателят няма право да възобнови стрелбата (виж Правило 10.6.1). Продължавайки да държи оръжието, насочено в безопасна посока към мишените, състезателят трябва да извърши финална проверка на оръжието както следва:\n\nСамозарядни пистолети – да освободи затворния блок и да натисне спусъка (без да докосва чукчето или декокера, ако има такъв). Ако пистолет е устроен така, че да изисква да има вкаран пълнител, за да стане възможно дърпането на спусъка, състезателя трябва при издаване на горната команда да уведоми Съдията, който ще ръководи и контролира използването и последващото отстраняване на празен пълнител, за да се улесни този процес.\n\nРеволвери – да затвори празния барабан (без да докосва чукчето, ако има такова)\n\nАко се окаже, че оръжието е празно, състезателят трябва да го прибере в кобура. Моментът, в който ръцете на сътезателя се отделят от прибраното оръжие се счита за края на курса на стрелба.\n\nАко се окаже, че оръжието не е празно, Съдията възобновява командите от Правило 8.3.6 (виж също Правило 10.4.3).",
+                "8.5.1": "Освен в случаите, когато състезателят действително е прицелен или стреля в мишените, всички движения трябва да се извършват с пръсти, ясно видими извън спусковата скоба и по възможност със заключен външен предпазител. Оръжието трябва да е насочено в безопасна посока. Под \"движение\" се разбира всяко от следните действия:\n\nПравене на повече от една стъпка в една посока.\n\nСмяна на позицията за стрелба (напр. от правостоящ към стрелба от коляно или от седнал в правостоящ и т.н.)",
+                "8.6.1": "Не е разрешено подпомагане от какъвто и да било вид на състезателя по време на курса на стрелба, с изключение на предупреждения, свързани с безопасността, които всеки Съдия, работещ на дадената сцена има право да издава по всяко време. Такова предупреждение не може да бъде предпоставка за повторение курса на стрелба (reshoot).",
+                "8.6.2": "Всеки, който извърши подпомагане на състезател по време на курса на стрелба без предварителното одобрение на Съдия (както и самият състезател, получил подпомагането), могат по преценка на Съдия, да получат по едно процедурно наказание за дадената сцена и/или да бъдат обект на разпоредбите на раздел 10.6.",
+                "8.6.3": "Всяко лице намесило се вербално или по някакъв друг начин по време на преминаване курса на стрелба на състезател може да бъде обект на Раздел 10.6. Ако Съдията вярва, че вмешателството значително се е отразило на състезателя, той трябва да докладва за това на Главния Съдия, който може по своя преценка да предложи на засегнатия състезател престрелване.",
+                "8.6.4": "В случай на неумишлен контакт между състезателя и Съдията на сцената или друго външно влияние върху състезателя по време на курса на стрелба, Съдията на сцената може да предложи на състезателя да повтори курса на стрелба. Състезателят трябва да приеме или откаже предложението преди да е видял времето или резултатите от първоначалния си опит. Ако все пак състезателят е извършил нарушение на правилата за безопасност, могат да се приложат разпоредбите на Раздел 10.4 и 10.5.",
+                "8.6.5": "В случай, че което и да е лице се окаже в направлението на мишените пред състезателя по време на изпълнение на курса на стрелба, състезателят незабавно трябва да бъде спрян и след възстановяване на упражнението да го престреля. Ако състезателят е открил този проблем преди Съдията, той е длъжен незабавно да спре, да прекрати стрелбата, да насочи оръжието в безопасна посока и да чака по-нататъшните инструкции на Съдията. Все пак, обаче, ако състезателят не изпълни тази процедура, ще бъдат приложени разпоредбите на Раздели 10.4 и 10.5.",
+                "8.7.1": "На състезателите е забранено да извършват прицелване и/или \"сух\" огън преди стартовия сигнал. Нарушението на това правило води до забележка при първо провинение и процедурно наказание за всяко следващо по време на това състезание. Състезателите могат да нагласят електронните мерници, насочвайки своите оръжия директно към земята пред себе си.",
+                "8.7.2": "На състезателите е забранено да използват всякакви помощни средства (напр. цели или части от имитации или реплики на оръжия, части от истински оръжия, включително аксесоари за тях и т.н.) по време на разглеждане курса на стрелба (т.нар. \"сухо\" минаване). Всяко нарушение води до едно процедурно наказание (виж също Правило 10.5.1).",
+                "8.7.3": "Никой няма право да влиза или да се разхожда в курса на стрелба, без предварително разрешение на Съдията на сцената или Главния Съдия. Нарушенията пораждат предупреждение за първо провинение, но могат да станат обект на разпоредбите на Раздел 10.6 при последващи провинения.",
+                "9.1.1": "Приближаване към мишените - По време на отчитане на резултатите, състезателят или неговият пълномощник нямат право да приближават която и да била мишена на разстояние по-малко от 1 метър без разрешението на Съдията. Първото нарушение на това правило се наказва с предупреждение, но всяко следващо може да доведе до налагане на процедурно наказание по усмотрение на Съдията.",
+                "9.1.2": "Докосване на мишените - По време на отчитане на резултатите, състезателят или неговият пълномощник нямат право да докосват, калиброват или по друг начин да въздействат върху която и да била мишена без разрешението на Съдията. Ако Съдията прецени, че състезателя или неговия пълномощник са повлияли на процеса на оценяването вследствие такова тяхно действие той може да предприеме следното:\n\nАко мишената е зачетна да я оцени като пропусната; или\n\nАко мишената е наказателна да отбележи попадения в нея.",
+                "9.1.3": "Предварително залепени мишени - Ако някоя мишена бъде залепена преди нейното отчитане и това доведе до невъзможност за правилното отчитане на резултата, Съдията е длъжен да нареди на състезателя да повтори курса на стрелба.",
+                "9.1.4": "Незалепени мишени - Ако след завършване на сцената се установи, че една или няколко мишени не са били предварително залепени, Съдията трябва да реши дали е възможно правилното отчитане на резултата. Ако върху въпросната мишена има повече попадения и не е ясно точно кои са на оценявания състезател, той трябва да повтори курса на стрелба.",
+                "9.1.4.1": "В случай че някоя лепенка се отлепи от хартиена мишена вследствие на вятър, въздушната струя от цевта или по каквато и да е друга причина и Съдията не е в състояние да установи кои точно попадения са на оценявания състезател, той трябва да нареди повторение на курса на стрелба.",
+                "9.1.4.2": "Състезател, който се поколебае или спре сам по време на преминаването на курса на стрелба, поради съмнение, че една или повече мишени не са били залепени или възстановени, не подлежи на повторение на курса на стрелба.",
+                "9.1.5.1": "Куршумът премине с цялата си част през оценъчната площ на хартиена мишена и продължавайки полета си попадне в друга хартиена мишена, то поразяването на втората мишена не се оценява като попадение или наказание.",
+                "9.1.5.2": "Куршумът премине с цялата си част през оценъчната площ на хартиена мишена и продължавайки полета си събори метална мишена, това се смята за повреда в оборудването на сцената и състезателят трябва да повтори курса на стрелба.",
+                "9.1.5.3": "Куршумът удари частично оценъчната площ на хартиена или метална мишена и продължавайки полета си попадне в друга хартиена мишена, то поразяването на втората мишена се отчита като попадение или наказание, в зависимост от предназначението на мишената.",
+                "9.1.5.4": "Куршумът удари частично оценъчната площ на хартиена или метална мишена и продължавайки полета си събори (или попадне в оценъчната площ на) друга метална мишена, то поразяването на втората мишена се отчита като попадение или наказание, в зависимост от предназначението на мишената.",
+                "9.1.6.1": "Куршумът премине с цялата си част през твърдо покритие и продължавайки полета си попадне в зачетната зона на зачетна хартиена или наказателна мишена, то попадението в хартиената или наказателна мишена не се зачита. Ако не може да се определи кое(и) попадение(я) са в резултат от прострелване на твърдото покритие, мишените се оценяват, като не се вземат под внимание съответния брой най-добри попадения.",
+                "9.1.6.2": "Куршумът премине с цялата си част през твърдо покритие и продължавайки полета си събори метална мишена, това се смята за повреда в оборудването на сцената (виж Правило 4.7.1) и състезателят трябва да повтори курса на стрелба, след възстановяването му.",
+                "9.1.6.3": "Куршумът удари частично твърдо покритие и продължавайки полета си попадне в хартиена мишена, то попадението в мишената се зачита.",
+                "9.1.6.4": "Куршумът удари частично твърдо покритие и продължавайки полета си събори метална мишена, то попадението в металната мишена се зачита. Ако куршумът удари частично твърдо покритие и продължавайки полета си порази или събори метална наказателна мишена, то попадението се отчита като наказание.",
+                "9.1.7": "Стойки на мишените - не са нито \"твърдо\" нито \"меко\" покритие. Всички попадения преминали напълно или частично през стойките и поразили хартиена или метална мишена се зачитат като попадение или наказание, в зависимост от предназначението на мишената.",
+                "9.4.2": "Всяко видимо попадение в оценъчната зона на хартиена наказателна мишена води до наказание от минус 10 точки. Наказват се максимум две попадения във всяка наказателна мишена.",
+                "9.7.4": "Оценъчният лист, подписан от състезателя и Съдията, е окончателно доказателство, че курса на стрелба е завършил и че времето и резултатите записани в него са верни и не подлежат на контестация. Двустранно подписаният оценъчен лист се смята за окончателен документ и с изключение на случаите на взаимно съгласие между състезателя и Съдията или решение на арбитражната комисия, промени в него могат да се правят единствено за оправяне на аритметични грешки или за вписване на процедурни наказания по Правило 8.6.2.",
+                "9.7.6": "Ако по една или друга причина повторението на курса на стрелба не е възможен, се предприемат следните действия:\n\nАко липсва времето, то състезателят получава нулев резултат за дадената сцена.\n\nАко са записани по малко попадения от необходимите, тези които са записани се приемат за пълни и окончателни.\n\nАко са записани повече попадения от необходимите, то под внимание се вземат необходимият брой най-високи стойности.\n\nПроцедурните наказания вписани в оценъчния лист се приемат за пълни и окончателни освен в случаите на приложение на Правило 8.6.2.\n\nАко липсва идентификацията на състезателя, случаят се отнася до Главния Съдия на мача, който трябва да предприеме действия по свое усмотрение за решаване на ситуацията.",
+                "9.7.8": "На никой друг, освен на оторизираните длъжностни лица не е позволено да борави/пипа оригиналните оценъчни листа, пазещи се на сцената или на което и да е друго място след като са били подписани от състезателя и Съдията, без предварителното одобрение на Съдията или персонала директно отговорен за статистиката. Нарушението на това правило се наказва с предупреждение за първо нарушение, но може да подлежи на санкция според Раздел 10.6 за следващо нарушение в рамките на един и същи мач.",
+                "9.9.2": "Движещи се мишени, които не изпълняват горните условия са криещи се и не носят наказания за необстрелване и/или липсващи попадения (miss), освен ако състезателя не пропусне да активира механизма за задвижването им преди или с последния изстрел за тази курс на стрелба.",
+                "9.10.2": "Ако, според мнението на арбитражната комисия, времето записано в оценъчния лист на даден състезател изглежда нереалистично, той трябва да повтори курса на стрелба (виж Правило 9.7.4).",
+                "10.1.1": "Процедурни наказания се налагат тогава, когато състезателят не спази процедурите, изрично упоменати в писмения брифинг на сцената и/или е открито нарушение на друго главно правило. Съдията налагащ процедурните наказания, трябва ясно да запише броя на наказанията и причината за тяхното налагане в оценъчния лист на състезателя.",
+                "10.1.2": "Всяко процедурно наказание се равнява на минус 10 точки.",
+                "10.1.3": "Състезател, несъгласен с получаването или броя на процедурните наказания, може да се обърне към главния съдия на сцената (CRO) и/или към главния съдия на мача (RM). Ако състезателят продължава да е неудовлетворен от тяхното решение, той има право да депозира жалба до арбитражната комисия.",
+                "10.1.4": "Процедурните наказания не могат да бъдат анулирани от последващи действия на състезателя. Например, състезател, който стреля по мишена, престъпвайки наказателна линия, ще получи приложимите процедурни наказания, дори в последствие да стреля по същата мишена без да престъпва съответната линия.",
+                "10.2.1": "Състезател, който стреля докато която и да е част от тялото му докосва земята или някакъв друг предмет отвъд наказателна линия, се наказва с едно процедурно наказание. Не се дава наказание ако състезателят не осъществи изстрел докато престъпва линията с изключение на случаите, когато се прилага правило 2.2.1.5.\n\nКогато състезателят печели значително преимущество, обстрелвайки дадена мишена/и докато престъпва линията, той може да получи по едно процедурно наказание за всеки изстрел по съответната мишена.",
+                "10.2.2": "Състезател, който не спази процедура, изрично упомената в писмения брифинг на сцената се наказва с едно процедурно наказание. Когато състезателят печели значително преимущество, неспазвайки съответната процедура, той може да получи по едно про- цедурно наказание за всеки осъществен изстрел (например, стреляйки веднъж или многократно от място, стрелкова позиция или положение несъответстващи на тези, описани в брифинга).",
+                "10.2.3": "Когато се налагат многократни наказания по горните случаи, те не трябва да превишават максималния брой възможни зачетни попадения, постижими от състезателя. Например състезател, който печели значително преимущество, престъпвайки наказателна линия, откъдето са видими само 4 метални мишени, може да получи максимално 4 процедурни наказания, без оглед на реално осъществените изстрели.",
+                "10.2.4": "Състезател, който не спази условие за задължително презареждане, получава по едно процедурно наказание за всеки изстрел след мястото определено за презареждане, докато не осъществи презареждането.",
+                "10.2.5": "В тунела на Купър, състезателят получава по едно процедурно наказание за всяка съборена летва. Ако летва падне вследствие сблъсък на състезателя със страничните подпори или в резултат на барутни газове от цевта или откат на оръжието, не се налага процедурно наказание.",
+                "10.2.6": "Състезател, който посяга към оръжието си, пълнител или боеприпаси или физически се придвижва към по изгодна позиция или поза след командата \"Standby\" и преди стартовия сигнал, получава едно процедурно наказание. Ако съдията има възможност да спре състезателя навреме, той получава предупреждение за първо нарушение и започва курса на стрелба отново.",
+                "10.2.7": "Състезател, който не успее да обстреля оценъчна мишена поне с един изстрел, получава по едно процедурно наказание за всяка необстреляна мишена ведно с приложимите наказания за липсващи попадения, освен в случаите на Правило 9.9.2.",
+                "10.2.8": "Ако курсът на стрелба (или част от него) постановява стрелба само със силна или слаба ръка, състезателя ще понесе по едно процедурно наказание за всяко възникнало докосване на оръжието (загребването му от маса и др. подобни) с другата ръка след стартовия сигнал (или от мястото, където е предвидена стрелбата с една ръка). Изключения са освобождаването на външния предпазител (без загребване), презареждане или отстраняване на неизправност. Все пак процедурно наказание ще бъде дадено за всеки произведен изстрел, основно когато състезателя използва другата си ръка или рамо за:\n\nпридържане на пистолета или осигуряване на китка или ръка докато стреля;\n\nувеличаване на стабилноста на земя, параван или друга опора докато стреля.",
+                "10.2.9": "Състезател, напуснал дадена позиция за стрелба има право, спазвайки всички мерки за безопасност, да се върне и да стреля от същата позиция. Писмените брифинги на някои класификационни курсове на стрелба или на състезания от 1-во и 2-ро ниво може да забраняват подобно действие. В такъв случай се налага по едно процедурно наказание за всеки осъществен изстрел.",
+                "10.2.10": "Специално наказание: Състезател, който не е в състояние, следствие травма или друга физическа недостатъчност, да изпълни част от курса на стрелба, има право, преди началото на стрелбата, да помоли Главния Съдия на мача да му бъде наложено специално наказание вместо приложимите за случая наказания.\n\nАко молбата е одобрена от Главния Съдия, той трябва да каже на състезателя преди той да е преминал курса на стрелба, големината на специалното наказание, намаление на точките на състезателя, събрани от съответния курс, в диапазона от 1% до 20%.\n\nАлтернативно, Главният Съдия може да се откаже от налагането на евентуални санкции по отношение на състезател, който поради наличието на значително физическо увреждане, не е в състояние да се съобрази с изискванията на курса на стрелба.\n\nАко молбата е отхвърлена от Главния Съдия, ще се приложат нормалните процедурни наказания.",
+                "10.2.11": "Състезател, който стреля над параван висок поне 1.80 см, ще понесе по едно процедурно наказание за всеки произведен изстрел (виж и Правило 2.2.3.1).",
+                "10.3.1": "Състезател, който наруши правилата на безопасност или извърши каквото и да е забранено деяние по време на състезание по правилата на IPSC, се дисквалифицира, като до момента на произнасяне по контестацията му по реда на Глава 11 същият няма право да стреля оставащите му курсове на стрелба, независимо от графика на състезанието или физическото им разположение.",
+                "10.4.1": "Изстрел над ограничителните валове или в посока, указана в писмения брифинг на сцената като небезопасна. Ако състезателят произведе легитимен изстрел по мишена, който след това продължи траекторията си в небезопасна посока, няма да бъде дисквалифициран, но в такъв случай могат да се приложат разпоредбите на Раздел 2.3.",
+                "10.4.2": "Изстрел в земята на разстояние от състезателя по-малко от 3 метра, освен в случай на стрелба по хартиена мишена, разположена на разстояние по-малко от 3 метра от състезателя. Това правило не важи, ако изстрелът е с патрон с \"капсен заряд\".",
+                "10.4.3": "Изстрел произведен по време на зареждане, презареждане или разреждане на оръжието. Това включва и изстрел по време на процедурите, описани в Правило 8.3.1 и Правило 8.3.7 (виж и Правило 10.5.10).\n\nИзключение – детонация, възникнала по време на разреждане на оръжието не се счита за изстрел водещ до дисквалификация, но в този случай могат да влязат в сила разпоредбите на Правило 5.1.6.",
+                "10.4.4": "Изстрел, възникнал по време на отстраняване на засечка на оръжието.",
+                "10.4.5": "Изстрел, възникнал при пренасянето на оръжието от едната в другата ръка.",
+                "10.4.6": "Изстрел по време на движение, освен в случаите на действителна стрелба по мишени.",
+                "10.4.7": "Изстрел по метална мишена, на разстояние по-малко от 7 метра, измерено от лицевата част на мишената до най-близката част от тялото на стрелеца, имаща досег със земята (виж Правило 2.1.3).",
+                "10.4.8": "Ако може да се установи, че причината за случайния изстрел е повредена или дефектна част на оръжието, се смята че състезателят не е нарушил правилата за безопасност и няма да бъде дисквалифициран, но резултатът му за сцената ще бъде нула.\n\nОръжието трябва незабавно да бъде предоставено на главния съдия или на негов пълномощник, който да го инспектира и проведе каквито тестове сметне за нужно за установяване, че причината за случайния изстрел е повредена или дефектна част. Състезател, който не предостави оръжието си за инспекция, преди да напусне курса на стрелба, губи правото си да обжалва дисквалификацията за случаен изстрел с мотивите че е причинен от повредена или дефектна част.",
+                "10.5.1": "Боравене с оръжието по всяко време, освен в означените безопасни зони или под надзора на Съдията на сцената, реагирайки на неговите команди. (Ограничено изключение: виж Правило 5.2.2).",
+                "10.5.2": "Насочването на оръжието над горната граница на ограничителните валове или извън дефинираните или допълнително определени ъгли на безопасност по време на курса на стрелба (ограничени изключения: виж Правила 2.1.2.1; 5.2.7.3 и 10.5.6).",
+                "10.5.3": "Ако по време на курса на стрелба състезателят изпусне оръжието си или причини неговото падане на земята, без значение дали е заредено или празно. Състезател, който по една или друга причина по време на курса на стрелба, безопасно и умишлено положи оръжието си на земята или друг стабилен обект, няма да бъде дисквалифициран, при положение че:\n\nСъстезателят поддържа постоянен физически контакт с оръжието, докато то бъде поставено сигурно и стабилно на земята или друг устойчив обект, и\n\nСъстезателят запазва дистанция от 1 метър от оръжието през цялото време (освен когато оръжието се поставя на по голямо разстояние под надзора на Ссъдията на сцената, за да се спази стартовата позиция), и\n\nНе настъпят клаузите на Правило 10.5.2, и\n\nОръжието е в положение, установено от Правило 8.1, или\n\nОръжието е незаредено и затвора е отворен.",
+                "10.5.4": "Прибирането и изваждането на оръжието от кобура в пределите на тунел",
+                "10.5.5": "Насочването на цевта на пистолета към която и да било част от тялото на състезателя по време на курса на стрелба. Това не важи при вадене и прибиране на оръжието в кобур, при условие че пръстът на състезателя е несъмнено извън спусковата скоба.",
+                "10.5.6": "Насочването на цевта на оръжието към която и да е част от тялото на друг човек (например Официално лице или зрител) по време на курса на стрелба. Дисквалификацията не е приложима, ако проблемът е възникнал следствие от действията на въпросното лице, което се появява пред състезателя по време на курса на стрелба, при условие, че състезателят спазва разпоредбите на Правило 8.6.5.",
+                "10.5.7": "Допускането на цевта на зареден пистолет да сочи назад в радиус по-голям от 1 метър от ходилата на състезателя при вадене и прибиране в кобур. Условието за 1м е приложимо само когато състезтеля е с лице директно към сцената.",
+                "10.5.8": "Носенето или използването на повече от едно оръжие по време на курса на стрелба.",
+                "10.5.9": "Неизваждането на пръста от спусковата скоба при отстраняване на засечка, когато е ясно видимо, че състезателят не е прицелен в мишените.",
+                "10.5.10": "Неизваждането на пръста от спусковата скоба при зареждане, презареждане и разреждане на оръжието, освен в случаите в които това е специално разрешено (виж Правила 8.1.2.4 и 8.3.7.1).",
+                "10.5.11": "Неизваждането на пръста от спусковата скоба по време на движение съобразно Правило 8.5.1.",
+                "10.5.12": "Прибиране на зареден пистолет в кобур в следното състояние:\n\nСамозаряден пистолет с единично действие с патрон в патронника и неспуснат предпазител.\n\nСамозаряден пистолет с двойно или селективно действие с вдигнато чукче и неспуснат предпазител.\n\nРеволвер с вдигнато чукче.",
+                "10.5.13": "Боравенето с истинска или бутафорна муниция в безопасна зона противоречащо на Правило 2.4.4.\n\nТерминът \"БОРАВЕНЕ\" не изключва възможността състезателите да влизат в Зоната за безопасност с боеприпаси в магазините или зареждачките разположени по колана, в джобовете или в чантата си, при условие че физически не ги вадят от местата им за съхранение докато са в Зоната за безопасност.",
+                "10.5.14": "Наличие на заредено оръжие, освен при изричната команда на Съдия",
+                "10.5.15": "Вдигането на изпуснато оръжие. Изпуснато оръжие задължително се вдига от Съдия, който след проверка и/или изчистване на оръжието, го поставя директно в куфарчето, чантата или кобура на състезателя. Изпускането или причиняването на падането на незаредено оръжие извън курса на стрелба не е нарушение, но вдигането му от състезателя води до дисквалификация.",
+                "10.5.16": "Използването на забранени и/или небезопасни боеприпаси (виж Правила 5.5.4, 5.5.6 и 5.5.7) и/или използването на забранено оръжие (виж Правила 5.1.10 и 5.1.11).",
+                "10.6.1": "Състезател може да бъде дисквалифициран за поведение, което Съдията сметне че е неспортсменско. Примерите включват, но не се ограничават от: измама, нечестност, неизпълнение на основателни указания на длъжностно лице, или всяко поведение, което може да развали репутацията на спорта. Главният Съдия трябва да бъде уведомен при първа възможност.",
+                "10.6.2": "Състезател, който по мнението на Съдията умишлено е махнал или причинил падането на предпазните си средства за защита на зрението и слуха, с цел постигане на преимущество или престрелване, се дисквалифицира.",
+                "10.7.3": "Освен когато са използвани с медицинска цел, състезателите и официалните лица не трябва да бъдат под влиянието на каквито и да било вещества (включително алкохол) по време на състезанията. Всеки, който според главния съдия е видимо под такова влияние, ще бъде диквалифициран от състезанието и може да бъде задължен да напусне стрелбището."
+                },
+                ui: {
+                    pageTitle: "Правила за IPSC състезания с пистолет",
+                    pageHeader: "📋 Правила за IPSC състезания с пистолет",
+                    searchPlaceholder: "Търсене на правила...",
+                    filterAll: "Всички",
+                    filterWarn: "⚠️ Предупр.",
+                    filterProc: "📋 Проц.",
+                    filterDQ: "⛔ Дискв.",
+                    filterReshoot: "🔄 Престр.",
+                    filterScoring: "🎯 Оцен.",
+                    statsRules: "Правила",
+                    noResults: "Няма намерени правила, отговарящи на търсенето.",
+                    docSource: "Комбиниран правилник Английски+Български, редакция 2024 год.",
+                    lastUpdated: "Последна актуализация: 7 май 2026",
+                    clickTip: "💡 Кликнете върху номера на правилото, за да видите пълния текст от официалния правилник",
+
+                    // Section titles
+                    sectionTitleWarnings: "Предупреждения",
+                    sectionTitleProcedures: "Процедури",
+                    sectionTitleDisqualifications: "Дисквалификации",
+                    sectionTitleReshoots: "Престрелване",
+                    sectionTitleScoring: "Оценяване",
+
+                    // Section descriptions
+                    sectionDescWarnings: "Нарушения, които водят до предупреждения, с нарастващи наказания при повторни нарушения.",
+                    sectionDescProcedures: "Процедурни изисквания със специфични отнемания на точки (-10 точки за процедурно наказание).",
+                    sectionDescDisqualifications: "Нарушения, които водят до незабавна дисквалификация от състезанието.",
+                    sectionDescReshoots: "Правила кога се разрешава или отказва престрелване.",
+                    sectionDescScoring: "Правила за оценяване.",
+
+                    // Table headers
+                    tableHeaderRule: "Правило",
+                    tableHeaderCondition: "Условие",
+                    tableHeaderAction: "Действие",
+
+                    // Fallback message
+                    ruleNotAvailable: "Пълният текст не е наличен"
+                }
+            }
         };
+
+        // Current language (persisted in localStorage)
+        let currentLang = localStorage.getItem('ipscRulesLang') || 'en';
+
 
         // Data structure
         const rulesData = {
             warnings: {
                 title: "Warnings",
+                titleKey: "sectionTitleWarnings",
                 description: "Violations that result in warnings, with escalating penalties for repeat offenses.",
+                descKey: "sectionDescWarnings",
                 type: "warnings",
                 rows: [
                     { rule: "5.2.1.2", condition: "Handgun carried in holster with loaded magazine well or cocked hammer/striker", action: "Warning for first offense; subsequent violations subject to Rule 10.6.1" },
@@ -860,7 +1070,9 @@
             },
             procedures: {
                 title: "Procedures",
+                titleKey: "sectionTitleProcedures",
                 description: "Procedural requirements with specific point deductions (-10 points per procedural penalty).",
+                descKey: "sectionDescProcedures",
                 type: "procedures",
                 rows: [
                     { rule: "8.7.2", condition: "Using sighting aids during course walkthrough (except hands)", action: "1 procedural penalty per occurrence. See also Rule 10.5.1." },
@@ -880,7 +1092,9 @@
             },
             disqualifications: {
                 title: "Disqualifications",
+                titleKey: "sectionTitleDisqualifications",
                 description: "Violations that result in immediate disqualification from the match.",
+                descKey: "sectionDescDisqualifications",
                 type: "disqualifications",
                 rows: [
                     { rule: "10.3.1", condition: "Any safety infraction or prohibited activity during match", action: "Disqualification; prohibited from attempting remaining courses of fire pending appeal verdict" },
@@ -915,7 +1129,9 @@
             },
             reshoots: {
                 title: "Reshoots",
+                titleKey: "sectionTitleReshoots",
                 description: "Rules for when reshoots are granted or denied.",
+                descKey: "sectionDescReshoots",
                 type: "reshoots",
                 rows: [
                     { rule: "2.3.3.3", condition: "[REFUSED] Competitor refuses ordered reshoot", action: "Zero score for that stage, regardless of previous attempt score" },
@@ -939,7 +1155,9 @@
             },
             scoring: {
                 title: "Scoring",
+                titleKey: "sectionTitleScoring",
                 description: "Rules for target scoring, hit evaluation, and handling of damaged or impenetrable targets.",
+                descKey: "sectionDescScoring",
                 type: "scoring",
                 rows: [
                     { rule: "9.1.1", condition: "Approaching targets closer than 1 meter during scoring without Range Officer authorization", action: "Warning for first offense; subsequent violations may incur procedural penalty at Range Officer discretion" },
@@ -996,7 +1214,15 @@
              });
          });
 
-         // Initialize filter button counts on page load
+         // Language switcher event listeners
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+        });
+
+        // Initialize UI with saved/default language
+        setLanguage(currentLang);
+
+        // Initialize filter button counts on page load
          updateFilterButtonCounts();
 
         modalCloseBtn.addEventListener('click', closeModal);
@@ -1011,6 +1237,47 @@
             }
         });
 
+        // Language switching functions
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('ipscRulesLang', lang);
+
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            // Update all UI
+            updateAllUI();
+        }
+
+        function updateAllUI() {
+            const t = translations[currentLang].ui;
+
+            // Update page title and header
+            document.title = t.pageTitle;
+            document.getElementById('pageHeader').textContent = t.pageHeader;
+
+            // Update search placeholder
+            searchInput.placeholder = t.searchPlaceholder;
+
+            // Update filter buttons
+            document.querySelector('[data-filter="all"]').innerHTML = t.filterAll;
+            document.querySelector('[data-filter="warnings"]').innerHTML = t.filterWarn;
+            document.querySelector('[data-filter="procedures"]').innerHTML = t.filterProc;
+            document.querySelector('[data-filter="disqualifications"]').innerHTML = t.filterDQ;
+            document.querySelector('[data-filter="reshoots"]').innerHTML = t.filterReshoot;
+            document.querySelector('[data-filter="scoring"]').innerHTML = t.filterScoring;
+
+            // Update footer
+            document.querySelector('footer p:nth-child(1)').innerHTML = `<strong>Document Source:</strong> ${t.docSource}`;
+            document.querySelector('footer p:nth-child(2)').innerHTML = t.lastUpdated;
+            document.querySelector('footer p:nth-child(3)').innerHTML = t.clickTip;
+
+            // Re-render content
+            render();
+        }
+
         // Render functions
         function render() {
             const visibleSections = getVisibleSections();
@@ -1020,7 +1287,7 @@
 
         function getVisibleSections() {
             let sections = Object.values(rulesData);
-            
+
             if (currentFilter !== 'all') {
                 sections = sections.filter(s => s.type === currentFilter);
             }
@@ -1045,7 +1312,7 @@
             let html = `
                 <div class="stat-card">
                     <div class="stat-number">${totalRules}</div>
-                    <div class="stat-label">Rules</div>
+                    <div class="stat-label">${translations[currentLang].ui.statsRules}</div>
                 </div>
             `;
 
@@ -1056,7 +1323,7 @@
             if (visibleSections.length === 0) {
                 sectionsContainer.innerHTML = `
                     <div class="no-results">
-                        <p>No rules found matching your search.</p>
+                        <p>${translations[currentLang].ui.noResults}</p>
                     </div>
                 `;
                 return;
@@ -1096,21 +1363,27 @@
         }
 
         function renderSection(section, idx, hasSearch) {
+            const t = translations[currentLang].ui;
+
+            // Get translated title and description
+            const sectionTitle = section.titleKey ? t[section.titleKey] : section.title;
+            const sectionDesc = section.descKey ? t[section.descKey] : section.description;
+
             const headerClass = (hasSearch || currentFilter !== 'all') ? '' : 'collapsed';
             let html = `
                 <div class="section ${headerClass}">
                     <div class="section-header">
-                        <span style="flex: 1; min-width: 0; overflow-wrap: break-word;">${section.title}</span>
+                        <span style="flex: 1; min-width: 0; overflow-wrap: break-word;">${sectionTitle}</span>
                         <span class="toggle-icon">▶</span>
                     </div>
                     <div class="section-content">
-                        <div class="section-description">${section.description}</div>
+                        <div class="section-description">${sectionDesc}</div>
                         <table>
                             <thead>
                                 <tr>
-                                    <th style="width: 20%; min-width: 50px;">Rule</th>
-                                    <th style="width: 40%; min-width: 100px;">Condition</th>
-                                    <th style="width: 40%; min-width: 100px;">Action</th>
+                                    <th style="width: 20%; min-width: 50px;">${t.tableHeaderRule}</th>
+                                    <th style="width: 40%; min-width: 100px;">${t.tableHeaderCondition}</th>
+                                    <th style="width: 40%; min-width: 100px;">${t.tableHeaderAction}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1190,7 +1463,8 @@
                 // Build modal content with all rules
                 let modalContent = '';
                 rulesInRange.forEach((rule, idx) => {
-                    const text = fullRuleText[rule] || `Rule ${rule} - Full text not available`;
+                    const text = translations[currentLang].fullRuleText[rule] ||
+                        `${translations[currentLang].ui.tableHeaderRule} ${rule} - ${translations[currentLang].ui.ruleNotAvailable}`;
                     modalContent += text;
                     if (idx < rulesInRange.length - 1) {
                         modalContent += '\n\n---\n\n';
@@ -1200,7 +1474,8 @@
                 document.getElementById('modalRuleNumber').textContent = ruleNum;
                 document.getElementById('modalBody').textContent = modalContent;
             } else {
-                const fullText = fullRuleText[ruleNum] || `Rule ${ruleNum} - Full text not available`;
+                const fullText = translations[currentLang].fullRuleText[ruleNum] ||
+                    `${translations[currentLang].ui.tableHeaderRule} ${ruleNum} - ${translations[currentLang].ui.ruleNotAvailable}`;
                 document.getElementById('modalRuleNumber').textContent = ruleNum;
                 document.getElementById('modalBody').textContent = fullText;
             }
