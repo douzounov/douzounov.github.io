@@ -233,15 +233,22 @@
         }
 
         .section-content {
+            display: grid;
+            grid-template-rows: 1fr;
             padding: 12px;
-            max-height: 5000px;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: grid-template-rows 0.3s ease-out, padding 0.3s ease-out;
         }
 
         .section.collapsed .section-content {
-            max-height: 0;
+            grid-template-rows: 0fr;
             padding: 0 12px;
+        }
+
+        /* Wrapper div for grid animation to work properly */
+        .section-content > .content-wrapper {
+            overflow: hidden;
+            min-height: 0;  /* Critical for Firefox compatibility */
         }
 
         table {
@@ -1398,16 +1405,17 @@
                         <span class="toggle-icon">▶</span>
                     </div>
                     <div class="section-content">
-                        <div class="section-description">${sectionDesc}</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 20%; min-width: 50px;">${t.tableHeaderRule}</th>
-                                    <th style="width: 40%; min-width: 100px;">${t.tableHeaderCondition}</th>
-                                    <th style="width: 40%; min-width: 100px;">${t.tableHeaderAction}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <div class="content-wrapper">
+                            <div class="section-description">${sectionDesc}</div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%; min-width: 50px;">${t.tableHeaderRule}</th>
+                                        <th style="width: 40%; min-width: 100px;">${t.tableHeaderCondition}</th>
+                                        <th style="width: 40%; min-width: 100px;">${t.tableHeaderAction}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
             `;
 
             section.rows.forEach(row => {
@@ -1425,6 +1433,7 @@
                         </table>
                     </div>
                 </div>
+            </div>
             `;
 
             return html;
