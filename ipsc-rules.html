@@ -1182,6 +1182,7 @@
         // Initialize
         let currentFilter = 'all';
         let searchTerm = '';
+        let expandedSections = new Set(); // Track manually expanded sections when filter is 'all'
 
         const searchInput = document.getElementById('searchInput');
         const filterButtons = document.querySelectorAll('.filter-btn');
@@ -1339,7 +1340,18 @@
             // Add event listeners to section headers
             document.querySelectorAll('.section-header').forEach(header => {
                 header.addEventListener('click', function() {
-                    this.closest('.section').classList.toggle('collapsed');
+                    const section = this.closest('.section');
+                    section.classList.toggle('collapsed');
+
+                    // Update expandedSections Set only when filter is 'all'
+                    if (currentFilter === 'all') {
+                        const sectionType = section.dataset.type;
+                        if (section.classList.contains('collapsed')) {
+                            expandedSections.delete(sectionType);
+                        } else {
+                            expandedSections.add(sectionType);
+                        }
+                    }
                 });
             });
 
@@ -1369,9 +1381,18 @@
             const sectionTitle = section.titleKey ? t[section.titleKey] : section.title;
             const sectionDesc = section.descKey ? t[section.descKey] : section.description;
 
-            const headerClass = (hasSearch || currentFilter !== 'all') ? '' : 'collapsed';
+            // Determine if section should be expanded
+            let headerClass;
+            if (hasSearch || currentFilter !== 'all') {
+                // Search active or specific filter selected: always expand
+                headerClass = '';
+            } else {
+                // Filter is 'all' with no search: check if user manually expanded this section
+                headerClass = expandedSections.has(section.type) ? '' : 'collapsed';
+            }
+
             let html = `
-                <div class="section ${headerClass}">
+                <div class="section ${headerClass}" data-type="${section.type}">
                     <div class="section-header">
                         <span style="flex: 1; min-width: 0; overflow-wrap: break-word;">${sectionTitle}</span>
                         <span class="toggle-icon">▶</span>
