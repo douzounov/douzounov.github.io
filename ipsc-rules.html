@@ -1277,6 +1277,9 @@
             document.querySelector('[data-filter="reshoots"]').innerHTML = t.filterReshoot;
             document.querySelector('[data-filter="scoring"]').innerHTML = t.filterScoring;
 
+            // Re-add counts to filter buttons after updating labels
+            updateFilterButtonCounts();
+
             // Update footer
             document.querySelector('footer p:nth-child(1)').innerHTML = `<strong>Document Source:</strong> ${t.docSource}`;
             document.querySelector('footer p:nth-child(2)').innerHTML = t.lastUpdated;
